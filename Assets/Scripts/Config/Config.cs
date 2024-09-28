@@ -7,10 +7,10 @@ using Views;
 public class Config : ScriptableObject
 {
     [SerializeField] private BubbleView _bubbleView;
-    [SerializeField] private ColorData[] _colorData;
+    [SerializeField] private ColorConfigData[] _colorData;
     [SerializeField] private TextAsset _fieldTextAsset;
         
     public BubbleView BubbleView => _bubbleView;
-    public IReadOnlyList<ColorData> BubbleData => _colorData;
+    public IReadOnlyList<ColorConfigData> BubbleData => _colorData;
     public TextAsset FieldTextAsset => _fieldTextAsset;
 }

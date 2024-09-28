@@ -5,11 +5,11 @@ using Field;
 public class Game
 {
     private GameState _gameState = GameState.Stop;
-    private IReadOnlyList<BubleData> _bubleData;
+    private BubleData[][] _bubleData;
 
     public GameState GameState => _gameState;
 
-    private Config _config;
+    private readonly Config _config;
     
     public Game(Config config)
     {
