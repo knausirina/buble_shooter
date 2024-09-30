@@ -39,7 +39,7 @@ namespace Field
 
                 result[i] = dataInRow;
             }
-            
+
             return new BublesData(result);
         }
     }

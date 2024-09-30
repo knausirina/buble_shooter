@@ -18,7 +18,7 @@ namespace Field
 
             for (var i = 0; i < bublesData.RowsCount; i++)
             {
-                for (var j = 0; j < bublesData.ColumnCount; j++)
+                for (var j = 0; j < bublesData.ColumnCount ; j++)
                 {
                     var bubleData = bublesData.Get(i, j);
                     if (bubleData == null)
@@ -26,7 +26,9 @@ namespace Field
                         continue;
                     }
 
+                    var pos = new Vector2(j * 0.3f, -i * 0.3f);
                     var view = Object.Instantiate(_config.BubbleView, Vector3.zero, Quaternion.identity, gameContext.BubbleViewRoot);
+                    view.transform.localPosition = pos;
                     view.Renderer.color = _config.GetColor(bubleData.Color);
                 }
             }
