@@ -2,7 +2,7 @@
 {
     public class FieldDataFromFile
     {
-        private Config _config;
+        private readonly Config _config;
         
         public FieldDataFromFile(Config config)
         {

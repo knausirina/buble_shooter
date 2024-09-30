@@ -2,7 +2,7 @@
 
 namespace Data
 {
-    public struct BubleData
+    public class BubleData
     {
         public ColorEnum Color { get; }
         public Vector2Int Position { get; }

@@ -5,10 +5,18 @@
      [SerializeField] private Config _config;
 
      private Game _game;
-     
+
      private void Awake()
      {
-         DontDestroyOnLoad(gameObject);
+         var obj = FindObjectsOfType<GameLauncher>();
+         if (obj.Length > 1)
+         {
+             Destroy(gameObject);
+         }
+         else
+         {
+             DontDestroyOnLoad(gameObject);
+         }
      }
 
      public void StartGame()
