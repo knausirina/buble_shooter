@@ -31,4 +31,9 @@ public class Game
         _fieldBuilder ??= new FieldBuilder(_config);
         _fieldBuilder.Build(_bublesData);
     }
+
+    public void Stop()
+    {
+        _gameState = GameState.Stop;
+    }
 }

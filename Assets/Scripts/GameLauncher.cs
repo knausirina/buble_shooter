@@ -28,4 +28,14 @@
              _game.Start();
          }
      }
+
+     public void StopGame()
+     {
+         if (_game == null)
+         {
+             return;
+         }
+
+         _game.Stop();
+     }
  }

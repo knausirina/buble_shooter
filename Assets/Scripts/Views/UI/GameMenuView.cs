@@ -30,6 +30,11 @@ namespace Views.UI
          OnMenuButtonAsync().Forget(Debug.LogError);
       }
 
+      private void OnStopGameButton()
+      {
+         
+      }
+
       private async UniTask OnMenuButtonAsync()
       {
          LoaderView.Instance.ToggleShow(true);
