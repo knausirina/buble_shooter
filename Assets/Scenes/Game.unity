@@ -388,6 +388,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 374119230}
+  - component: {fileID: 374119231}
   m_Layer: 0
   m_Name: Slingshot
   m_TagString: Untagged
@@ -412,9 +413,28 @@ Transform:
   - {fileID: 51372734}
   - {fileID: 701550742}
   - {fileID: 2019859303}
-  - {fileID: 816007891}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &374119231
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 374119229}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fbaa7a34829d45229f6d9086d4c0b4d0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  leftAnchor: {fileID: 701550742}
+  rightAnchor: {fileID: 2019859303}
+  ObjectHolder: {fileID: 1991410478}
+  _traectory: {fileID: 394972309}
+  lines:
+  - {fileID: 789786689}
+  - {fileID: 51372733}
+  points: []
 --- !u!4 &394972309 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 6433602820284458936, guid: fa38ec85819cc452ea4059912b611d1c, type: 3}
@@ -707,7 +727,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _bubbleViewRoot: {fileID: 534463646}
-  _fieldRectTransform: {fileID: 0}
+  _fieldRectTransform: {fileID: 672633024}
 --- !u!4 &749932572
 Transform:
   m_ObjectHideFlags: 0
@@ -854,58 +874,6 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0.3168231, y: 0.14307797, z: -0.47311112}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 374119230}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &816007889
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 816007891}
-  - component: {fileID: 816007890}
-  m_Layer: 0
-  m_Name: SlingShotManager
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &816007890
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 816007889}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fbaa7a34829d45229f6d9086d4c0b4d0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  leftAnchor: {fileID: 701550742}
-  rightAnchor: {fileID: 2019859303}
-  ObjectHolder: {fileID: 1991410478}
-  _traectory: {fileID: 394972309}
-  lines:
-  - {fileID: 789786689}
-  - {fileID: 51372733}
-  points: []
---- !u!4 &816007891
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 816007889}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.099644095, y: 0.16340876, z: -0.010429651}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1576,8 +1544,7 @@ MonoBehaviour:
   _borderXMax: 1.4
   _borderYMin: -3
   _borderYMax: -2
-  _sensitivity: 0
-  _slingShotLines: {fileID: 0}
+  _sensitivity: 40
 --- !u!212 &1991410475
 SpriteRenderer:
   m_ObjectHideFlags: 0
