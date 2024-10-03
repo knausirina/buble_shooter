@@ -14,12 +14,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _bubbleView: {fileID: 5966502574797495775, guid: fa38ec85819cc452ea4059912b611d1c, type: 3}
   _colorData:
-  - ColorEnum: 1
+  - ColorEnum: 0
     Color: {r: 0.92648506, g: 1, b: 0.0141509175, a: 1}
-  - ColorEnum: 2
+  - ColorEnum: 1
     Color: {r: 1, g: 0.047946326, b: 0, a: 1}
-  - ColorEnum: 3
+  - ColorEnum: 2
     Color: {r: 0, g: 0.14186478, b: 1, a: 1}
-  - ColorEnum: 4
+  - ColorEnum: 3
     Color: {r: 0.013375282, g: 1, b: 0, a: 1}
   _fieldTextAsset: {fileID: 4900000, guid: 902a973df1be65c49a0dd5d579729e6a, type: 3}
