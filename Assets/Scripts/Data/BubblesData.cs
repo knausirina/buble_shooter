@@ -1,22 +1,21 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
-
 namespace Data
 {
-    public class BublesData
+    public class BubblesData
     {
-        private readonly List<List<BubleData>> _data;
+        private readonly List<List<BubbleData>> _data;
         private readonly Vector2Int _fieldSizeInPixels;
         private readonly Vector2Int _fieldSizeInElements;
 
-        public BublesData(List<List<BubleData>> data, Vector2Int fieldSizeInPixels, Vector2Int fieldSizeInElements)
+        public BubblesData(List<List<BubbleData>> data, Vector2Int fieldSizeInPixels, Vector2Int fieldSizeInElements)
         {
             _data = data;
             _fieldSizeInPixels = fieldSizeInPixels;
             _fieldSizeInElements = fieldSizeInElements;
         }
 
-        public BubleData Get(int row, int column)
+        public BubbleData Get(int row, int column)
         {
             return _data[row][column];
         }

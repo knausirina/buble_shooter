@@ -12,9 +12,9 @@ public class Game
 
     private readonly Config _config;
     
-    private BublesData _bublesData;
+    private BubblesData _bubblesData;
     private FieldDataFromFile _fieldDataFromFile;
-    private BuilderBubleDataByString _builderBubleDataByString;
+    private BuilderBubbleDataByString _builderBubbleDataByString;
     private FieldBuilder _fieldBuilder;
     private FieldDecoration _fieldDecoration;
     private GameContext _gameContext;
@@ -30,15 +30,15 @@ public class Game
     {
         _fieldDataFromFile ??= new FieldDataFromFile(_config);
 
-        _bublesData = (_builderBubleDataByString ?? new BuilderBubleDataByString()).GetData(_fieldDataFromFile.GetData());
+        _bubblesData = (_builderBubbleDataByString ?? new BuilderBubbleDataByString()).GetData(_fieldDataFromFile.GetData());
 
         _gameContext = Object.FindObjectOfType<GameContext>();
         
         _fieldBuilder ??= new FieldBuilder(_config);
-        _fieldBuilder.Build(_gameContext, _bublesData);
+        _fieldBuilder.Build(_gameContext, _bubblesData);
 
         _fieldDecoration ??= new FieldDecoration();
-        _fieldDecoration.Build(_gameContext, _bublesData);
+        _fieldDecoration.Build(_gameContext, _bubblesData);
         
         _gameContext.Slingshot.Construct(this);
         

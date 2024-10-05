@@ -5,11 +5,11 @@ using UnityEngine;
 
 namespace Field
 {
-    public class BuilderBubleDataByString
+    public class BuilderBubbleDataByString
     {
         private char _emptySymbol = '0';
         
-        public BublesData GetData(string text)
+        public BubblesData GetData(string text)
         {
             var fieldSizeInPixel = Vector2Int.zero;
             var fieldSizeInElements = Vector2Int.zero;
@@ -18,7 +18,7 @@ namespace Field
             {
                 string line;
                 var i = 0;
-                var result = new List<List<BubleData>>();
+                var result = new List<List<BubbleData>>();
                 while ((line = strReader.ReadLine()) != null) 
                 { 
                     Debug.Log($" line = {line}");
@@ -43,7 +43,7 @@ namespace Field
                         }
                         default:
                         {
-                            var dataInRow = new List<BubleData>();
+                            var dataInRow = new List<BubbleData>();
                             for (var j = 0; j < line.Length; j++)
                             {
                                 var symbol = line[j];
@@ -55,7 +55,7 @@ namespace Field
                                         Debug.LogWarning($"Incorrect color = {symbol}");
                                     }
 
-                                    dataInRow.Add(new BubleData(colorEnum, new Vector2Int(i, j)));
+                                    dataInRow.Add(new BubbleData(colorEnum, new Vector2Int(i, j)));
                                 }
                                 else
                                 {
@@ -70,7 +70,7 @@ namespace Field
 
                     i++;
                 }
-                return new BublesData(result, fieldSizeInPixel, fieldSizeInElements);
+                return new BubblesData(result, fieldSizeInPixel, fieldSizeInElements);
             }
         }
     }

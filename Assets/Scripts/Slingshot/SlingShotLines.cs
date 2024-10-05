@@ -12,12 +12,23 @@ namespace Slingshot
         [SerializeField] private GameObject[] points;
         
         public Transform Traectory => _traectory;
-        
+
+        public void UpdatePositions()
+        {
+            UpdateBeginPositions();
+        }
+
         private void Start()
+        {
+            UpdateBeginPositions();
+            
+            SetPath(true);
+        }
+
+        private void UpdateBeginPositions()
         {
             lines[0].SetPosition(0, leftAnchor.position);
             lines[1].SetPosition(0, rightAnchor.position);
-            SetPath(true);
         }
 
         private void Update()

@@ -4,10 +4,12 @@ namespace Slingshot
 {
     public class SlingShot : MonoBehaviour
     {
+        private const float BORDER_OFFSET_Y_MIN = -0.3f;
+        private const float BORDER_OFFSET_Y_MAX = 0.3f;
+        
         [SerializeField] private float _borderXMin = -1.4f;
         [SerializeField] private float _borderXMax = 1.4f;
-        [SerializeField] private float _borderYMin = -3f;
-        [SerializeField] private float _borderYMax = -2.36f;
+        
         [SerializeField] private float _sensitivity = 40f;
         
         private SlingShotLines _slingShotLines;
@@ -16,13 +18,28 @@ namespace Slingshot
         private Vector3 _mouseReference;
         private Vector3 _mouseOffset;
         private bool _isRotating;
+        private float _borderYMin;
+        private float _borderYMax;
+        private bool _isBeginTouch = false;
 
+        private SpriteRenderer _spriteRenderer;
         private Game _game;
         
         public void Construct(Game game)
         {
             _game = game;
             _game.GameStateChanged += OnGameStateChanged;
+
+            _borderYMin = transform.position.y + BORDER_OFFSET_Y_MIN;
+            _borderYMax = transform.position.y + BORDER_OFFSET_Y_MAX;
+
+            _slingShotLines.UpdatePositions();
+        }
+
+        private void Awake()
+        {
+            _spriteRenderer = GetComponent<SpriteRenderer>();
+            _slingShotLines = FindObjectOfType<SlingShotLines>();
         }
 
         private void OnDestroy()
@@ -41,13 +58,7 @@ namespace Slingshot
                     break;
             }
         }
-
-        private void Awake()
-        {
-            _slingShotLines = FindObjectOfType<SlingShotLines>();
-        }
-
-        private bool _inMouseDown = false;
+        
         private void Update()
         {
             if (_game == null)
@@ -63,37 +74,35 @@ namespace Slingshot
 #if UNITY_EDITOR
             if (Input.GetMouseButtonDown(0))
             {
-                OnMouseDown1();
-                _inMouseDown = true;
+                OnBeginTouch();
+                _isBeginTouch = true;
             }
 
             if (Input.GetMouseButtonUp(0))
             {
-                OnMouseUp2();
-                _inMouseDown = false;
+                OnEndTouch();
+               _isBeginTouch = false;
             }
 
-            if (_inMouseDown)
+            if (_isBeginTouch)
             {
-                OnMouseDrag2(Input.mousePosition);
+                OnMove();
             }
 #else
 
             if (Input.touchCount > 0)
             {
-                Debug.Log("xxx Input.touchCount " + Input.touchCount);
-                
                 if (Input.touches[0].phase == TouchPhase.Began)
                 {
-                    OnMouseDown1();
+                    OnBeginTouch();
                 }
                 else if (Input.touches[0].phase == TouchPhase.Moved)
                 {
-                    OnMouseDrag2(Input.touches[0].position);
+                    OnMove(Input.touches[0].position);
                 }
                 else if (Input.touches[0].phase == TouchPhase.Ended)
                 {
-                    OnMouseUp2();
+                    OnEndTouch();
                 }
             }
 
@@ -102,33 +111,47 @@ namespace Slingshot
             
             SetDirection();
         }
-        
-        private void OnMouseDown1()
+
+        private Vector2 GetTouchPosition()
         {
-            Debug.Log("xxx OnMouseDown1");
+#if UNITY_EDITOR
+            return Input.mousePosition;
+#else
+            return Input.GetTouch(0).position;
+#endif
+        }
+
+        void OnBeginTouch()
+        {
+            var position = GetTouchPosition();
+            if (!IsTouchTargetObject(position))
+            {
+                return;
+            }
+
             _isRotating = true;
 
             _mouseReference = transform.position;
 
-            _offset = _initPosition - _game.GameContext.Camera.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y,0));
+            _offset = _initPosition - _game.GameContext.Camera.ScreenToWorldPoint(position);
 
-            _slingShotLines.Traectory.eulerAngles = new Vector3 (0,0,0);
+            _slingShotLines.Traectory.eulerAngles = Vector3.zero;
             _slingShotLines.SetPath(true);
         }
 
-        private void OnMouseDrag2(Vector3 position)
+        private void OnMove()
         {
-            Debug.Log("xxx OnMouseDrag2");
-            var curScreenPoint = position;//new Vector3(Input.mousePosition.x, Input.mousePosition.y, 0);
+            var position = GetTouchPosition();
+            var curScreenPoint = new Vector3(position.x, position.y, _game.GameContext.Camera.nearClipPlane);
             var curPosition = _game.GameContext.Camera.ScreenToWorldPoint(curScreenPoint) + _offset;
             transform.position = curPosition;
 
-            var posX = Mathf.Clamp (transform.position.x, _borderXMin, _borderXMax);
-            var posY = Mathf.Clamp (transform.position.y, _borderYMin, _borderYMax);
-
+            var posX = Mathf.Clamp(transform.position.x, _borderXMin, _borderXMax);
+            var posY = Mathf.Clamp(transform.position.y, _borderYMin, _borderYMax);
             transform.position = new Vector3 (posX, posY, curPosition.z);
         }
-        private void OnMouseUp2()
+        
+        private void OnEndTouch()
         {
             _isRotating = false;
             transform.position = _initPosition;
@@ -136,9 +159,16 @@ namespace Slingshot
             ResetDirection();
         }
 
+        private bool IsTouchTargetObject(Vector3 position)
+        {
+            Vector2 mousePosition = _game.GameContext.Camera.ScreenToWorldPoint(position);
+
+            return _spriteRenderer.bounds.Contains(mousePosition);
+        }
+
         private void ResetDirection()
         {
-            _slingShotLines.Traectory.eulerAngles = new Vector3 (0,0,0);
+            _slingShotLines.Traectory.eulerAngles = Vector3.zero;
             _slingShotLines.SetPath(false);
         }
 

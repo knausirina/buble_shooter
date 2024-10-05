@@ -4,7 +4,6 @@ public class GameContext : MonoBehaviour
 {
     [SerializeField] private Transform _bubblesViewRoot;
     [SerializeField] private RectTransform _fieldRectTransform;
-    [SerializeField] private Transform _shootBubbleTransform;
     [SerializeField] private Transform _slingshotLinesTransform;
     [SerializeField] private Slingshot.SlingShot _slingshot;
     [SerializeField] private Camera _camera;

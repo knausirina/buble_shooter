@@ -405,7 +405,7 @@ Transform:
   m_GameObject: {fileID: 374119229}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.3168231, y: -1.853078, z: 0.47311112}
+  m_LocalPosition: {x: -0.3168231, y: -3, z: 0.47311112}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -691,7 +691,7 @@ Transform:
   m_GameObject: {fileID: 701550741}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.6831769, y: -0.036921978, z: 4.426889}
+  m_LocalPosition: {x: -0.6831769, y: 0.5, z: 4.426889}
   m_LocalScale: {x: 0.84, y: 0.84, z: 0.84}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -728,7 +728,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _bubblesViewRoot: {fileID: 534463646}
   _fieldRectTransform: {fileID: 672633024}
-  _shootBubbleTransform: {fileID: 1991410478}
   _slingshotLinesTransform: {fileID: 374119230}
   _slingshot: {fileID: 1991410479}
   _camera: {fileID: 1121540356}
@@ -1632,7 +1631,7 @@ Transform:
   m_GameObject: {fileID: 2019859302}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 1.3168231, y: -0.036921978, z: 4.426889}
+  m_LocalPosition: {x: 0.6831769, y: 0.5, z: 4.426889}
   m_LocalScale: {x: 0.84, y: 0.84, z: 0.84}
   m_ConstrainProportionsScale: 0
   m_Children: []

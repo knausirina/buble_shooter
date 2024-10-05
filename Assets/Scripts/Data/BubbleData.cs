@@ -2,12 +2,12 @@
 
 namespace Data
 {
-    public class BubleData
+    public class BubbleData
     {
         public ColorEnum Color { get; }
         public Vector2Int Position { get; }
 
-        public BubleData(ColorEnum colorEnum, Vector2Int position)
+        public BubbleData(ColorEnum colorEnum, Vector2Int position)
         {
             Color = colorEnum;
             Position = position;

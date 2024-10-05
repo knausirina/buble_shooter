@@ -12,13 +12,13 @@ namespace Field
             _config = config;
         }
 
-        public void Build(GameContext gameContext, BublesData bublesData)
+        public void Build(GameContext gameContext, BubblesData bubblesData)
         {
-            for (var i = 0; i < bublesData.RowsCount; i++)
+            for (var i = 0; i < bubblesData.RowsCount; i++)
             {
-                for (var j = 0; j < bublesData.ColumnCount ; j++)
+                for (var j = 0; j < bubblesData.ColumnCount ; j++)
                 {
-                    var bubleData = bublesData.Get(i, j);
+                    var bubleData = bubblesData.Get(i, j);
                     if (bubleData == null)
                     {
                         continue;
