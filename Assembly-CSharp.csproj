@@ -61,9 +61,11 @@
     <Compile Include="Assets\Scripts\Data\BubleData.cs" />
     <Compile Include="Assets\Scripts\GameContext.cs" />
     <Compile Include="Assets\Scripts\Scenes.cs" />
+    <Compile Include="Assets\Scripts\Field\FielDecation.cs" />
     <Compile Include="Assets\Scripts\Views\UI\LoaderView.cs" />
     <Compile Include="Assets\Scripts\Field\BuilderBubleDataByString.cs" />
     <Compile Include="Assets\Scripts\GameState.cs" />
+    <Compile Include="Assets\Scripts\Field\Colors.cs" />
     <None Include="Assets\Configs\Field.txt" />
     <Reference Include="UnityEngine">
       <HintPath>C:\Program Files\Unity\Hub\Editor\2022.3.30f1-x86_64\Editor\Data\Managed\UnityEngine\UnityEngine.dll</HintPath>

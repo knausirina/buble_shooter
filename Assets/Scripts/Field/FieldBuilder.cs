@@ -12,10 +12,8 @@ namespace Field
             _config = config;
         }
 
-        public void Build(BublesData bublesData)
+        public void Build(GameContext gameContext, BublesData bublesData)
         {
-            var gameContext = Object.FindObjectOfType<GameContext>();
-
             for (var i = 0; i < bublesData.RowsCount; i++)
             {
                 for (var j = 0; j < bublesData.ColumnCount ; j++)
@@ -27,7 +25,7 @@ namespace Field
                     }
 
                     var pos = new Vector2(j * 0.3f, -i * 0.3f);
-                    var view = Object.Instantiate(_config.BubbleView, Vector3.zero, Quaternion.identity, gameContext.BubbleViewRoot);
+                    var view = Object.Instantiate(_config.BubbleView, Vector3.zero, Quaternion.identity, gameContext.BubblesViewRoot);
                     view.transform.localPosition = pos;
                     view.Renderer.color = _config.GetColor(bubleData.Color);
                 }
