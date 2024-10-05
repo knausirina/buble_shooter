@@ -7,8 +7,8 @@ namespace Slingshot
         private const float BORDER_OFFSET_Y_MIN = -0.3f;
         private const float BORDER_OFFSET_Y_MAX = 0.3f;
         
-        [SerializeField] private float _borderXMin = -1.4f;
-        [SerializeField] private float _borderXMax = 1.4f;
+        private float _borderXMin = -1.4f;
+        private float _borderXMax = 1.4f;
         
         [SerializeField] private float _sensitivity = 40f;
         
@@ -32,6 +32,12 @@ namespace Slingshot
 
             _borderYMin = transform.position.y + BORDER_OFFSET_Y_MIN;
             _borderYMax = transform.position.y + BORDER_OFFSET_Y_MAX;
+            
+            var field = game.GameContext.FieldRectTransform;
+            var corners = new Vector3[4];
+            field.GetWorldCorners(corners);
+            _borderXMin = corners[0].x + 0.1f;
+            _borderXMax = corners[3].x - 0.1f;
 
             _slingShotLines.UpdatePositions();
         }
@@ -98,7 +104,7 @@ namespace Slingshot
                 }
                 else if (Input.touches[0].phase == TouchPhase.Moved)
                 {
-                    OnMove(Input.touches[0].position);
+                    OnMove();
                 }
                 else if (Input.touches[0].phase == TouchPhase.Ended)
                 {

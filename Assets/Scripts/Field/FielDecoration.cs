@@ -11,11 +11,9 @@ namespace Field
         {
             gameContext.FieldRectTransform.sizeDelta =
                 new Vector2(bubblesData.FieldSizeInPixels.x, bubblesData.FieldSizeInPixels.y);
-            
-            var canvasHeight = gameContext.Canvas.GetComponent<RectTransform>().rect.height;
 
             var worldPosition = gameContext.Camera.ScreenToWorldPoint(new Vector3(0,
-                canvasHeight - gameContext.FieldRectTransform.sizeDelta.y +
+                gameContext.GetHeightCanvas() - gameContext.FieldRectTransform.sizeDelta.y +
                 gameContext.FieldRectTransform.anchoredPosition.y, gameContext.Camera.nearClipPlane));
             
             worldPosition.x = 0;

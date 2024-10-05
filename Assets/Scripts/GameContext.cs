@@ -9,10 +9,19 @@ public class GameContext : MonoBehaviour
     [SerializeField] private Camera _camera;
     [SerializeField] private Canvas _canvas;
 
+    private float _canvasHeight;
+    
     public Transform BubblesViewRoot => _bubblesViewRoot;
     public RectTransform FieldRectTransform => _fieldRectTransform;
     public Slingshot.SlingShot Slingshot => _slingshot;
     public Transform SlingshotLinesTransform => _slingshotLinesTransform;
     public Camera Camera => _camera;
     public Canvas Canvas => _canvas;
+    
+    public float GetHeightCanvas()
+    {
+        if (_canvasHeight == 0)
+            _canvasHeight = _canvas.GetComponent<RectTransform>().rect.height;
+        return _canvasHeight;
+    }
 }
