@@ -7,7 +7,9 @@ namespace Field
 {
     public class BuilderBubbleDataByString
     {
-        private char _emptySymbol = '0';
+        private readonly char _emptySymbol = '0';
+        private const int NUM_ROW_WITH_COUNTS_BUBBLES = 0;
+        private const int NUM_ROW_WITH_SIZE_FIELD = 1;
         
         public BubblesData GetData(string text)
         {
@@ -25,7 +27,7 @@ namespace Field
 
                     switch (i)
                     {
-                        case 0:
+                        case NUM_ROW_WITH_COUNTS_BUBBLES:
                         {
                             var values = line.Split(' ');
                             var width = int.Parse(values[0]);
@@ -33,7 +35,7 @@ namespace Field
                             fieldSizeInPixel = new Vector2Int(width, height);
                             break;
                         }
-                        case 1:
+                        case NUM_ROW_WITH_SIZE_FIELD:
                         {
                             var values = line.Split(' ');
                             var columns = int.Parse(values[0]);
