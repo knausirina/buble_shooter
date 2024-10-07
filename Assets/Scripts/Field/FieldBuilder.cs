@@ -38,8 +38,8 @@ namespace Field
                         continue;
                     }
 
-                    var remainder = i - (i / 2) * 2;
-                    var pos = new Vector2(j * (sizeBall + offset) + remainder * 5 * offset / 10f, -i * (sizeBall + offset));
+                    var remainder = i - i / 2 * 2;
+                    var pos = new Vector2(j * (sizeBall + offset) + 3 * remainder * offset, -i * (sizeBall + offset));
                     var view = Object.Instantiate(_config.BubbleView, Vector3.zero, Quaternion.identity, gameContext.BubblesViewRoot);
                     view.transform.localPosition = pos;
                     view.Renderer.color = _config.GetColor(bubbleData.Color);
