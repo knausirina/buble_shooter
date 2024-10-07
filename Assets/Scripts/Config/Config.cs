@@ -9,12 +9,15 @@ public class Config : ScriptableObject
     [SerializeField] private BubbleView _bubbleView;
     [SerializeField] private ColorConfigData[] _colorData;
     [SerializeField] private TextAsset _fieldTextAsset;
-        
+    [SerializeField] private int _shooterHeight;
+    
+    private Dictionary<ColorEnum, Color> _colorsByEnum;
+    
     public BubbleView BubbleView => _bubbleView;
     public IReadOnlyList<ColorConfigData> BubbleData => _colorData;
     public TextAsset FieldTextAsset => _fieldTextAsset;
-
-    private Dictionary<ColorEnum, Color> _colorsByEnum;
+    public int ShooterHeight => _shooterHeight;
+    
     public Color GetColor(ColorEnum colorEnum)
     {
         if (_colorsByEnum == null)

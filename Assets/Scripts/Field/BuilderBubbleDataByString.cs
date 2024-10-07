@@ -11,10 +11,10 @@ namespace Field
         private const int NUM_ROW_WITH_COUNTS_BUBBLES = 0;
         private const int NUM_ROW_WITH_SIZE_FIELD = 1;
         
-        public BubblesData GetData(string text)
+        public BubblesData GetData(string text, out Vector2Int fieldSizeInPixel, out Vector2Int fieldSizeInElements)
         {
-            var fieldSizeInPixel = Vector2Int.zero;
-            var fieldSizeInElements = Vector2Int.zero;
+            fieldSizeInPixel = Vector2Int.zero;
+            fieldSizeInElements = Vector2Int.zero;
             
             using (var strReader = new StringReader(text))
             {
@@ -72,7 +72,7 @@ namespace Field
 
                     i++;
                 }
-                return new BubblesData(result, fieldSizeInPixel, fieldSizeInElements);
+                return new BubblesData(result);
             }
         }
     }

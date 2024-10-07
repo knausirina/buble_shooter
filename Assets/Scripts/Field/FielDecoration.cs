@@ -7,10 +7,12 @@ namespace Field
     {
         private const float OFFSE_BALL_POSITION_Y = 0.5f;
         
-        public void Build(GameContext gameContext, BubblesData bubblesData)
+        public void Build(Game game, BubblesData bubblesData)
         {
+            var gameContext = game.GameContext;
+            
             gameContext.FieldRectTransform.sizeDelta =
-                new Vector2(bubblesData.FieldSizeInPixels.x, bubblesData.FieldSizeInPixels.y);
+                new Vector2(game.FieldSizeInPixels.x, game.FieldSizeInPixels.y);
 
             var worldPosition = gameContext.Camera.ScreenToWorldPoint(new Vector3(0,
                 gameContext.GetHeightCanvas() - gameContext.FieldRectTransform.sizeDelta.y +

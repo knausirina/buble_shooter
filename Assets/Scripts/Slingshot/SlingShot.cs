@@ -6,9 +6,9 @@ namespace Slingshot
     {
         private const float BORDER_OFFSET_Y_MIN = -0.3f;
         private const float BORDER_OFFSET_Y_MAX = 0.3f;
-        
-        private float _borderXMin = -1.4f;
-        private float _borderXMax = 1.4f;
+
+        private float _borderXMin;
+        private float _borderXMax;
         
         [SerializeField] private float _sensitivity = 40f;
         
