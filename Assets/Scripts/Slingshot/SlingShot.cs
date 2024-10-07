@@ -27,7 +27,6 @@ namespace Slingshot
         public void Construct(Game game)
         {
             _game = game;
-            _game.GameStateChanged += OnGameStateChanged;
 
             _borderYMin = transform.position.y + BorderOffsetYMin;
             _borderYMax = transform.position.y + BorderOffsetYMax;
@@ -42,6 +41,10 @@ namespace Slingshot
         public void ToggleActive(bool isActive)
         {
             gameObject.SetActive(isActive);
+            if (isActive)
+            {
+                _initPosition = TargetTransform.position;
+            }
         }
 
         public void SetTargetSpriteRenderer(SpriteRenderer spriteRenderer)
@@ -53,26 +56,6 @@ namespace Slingshot
         private void Awake()
         {
             ToggleActive(false);
-        }
-
-        private void OnDestroy()
-        {
-            if (_game != null)
-            {
-                _game.GameStateChanged -= OnGameStateChanged;
-            }
-        }
-
-        private void OnGameStateChanged()
-        {
-            switch (_game.GameState)
-            {
-                case GameState.Play:
-                    _initPosition = transform.position;
-                    break;
-                case GameState.Stop:
-                    break;
-            }
         }
         
         private void Update()
@@ -160,18 +143,17 @@ namespace Slingshot
             var position = GetTouchPosition();
             var curScreenPoint = new Vector3(position.x, position.y, _game.GameContext.Camera.nearClipPlane);
             var curPosition = _game.GameContext.Camera.ScreenToWorldPoint(curScreenPoint) + _offset;
-
-            var targetTransform = _targetSpriteRenderer.transform.parent.transform;
-            targetTransform.position = curPosition;
-            var posX = Mathf.Clamp(targetTransform.position.x, _borderXMin, _borderXMax);
-            var posY = Mathf.Clamp(targetTransform.position.y, _borderYMin, _borderYMax);
-            targetTransform.position = new Vector3 (posX, posY, curPosition.z);
+            
+            TargetTransform.position = curPosition;
+            var posX = Mathf.Clamp(TargetTransform.position.x, _borderXMin, _borderXMax);
+            var posY = Mathf.Clamp(TargetTransform.position.y, _borderYMin, _borderYMax);
+            TargetTransform.position = new Vector3 (posX, posY, curPosition.z);
         }
         
         private void OnEndTouch()
         {
             _isRotating = false;
-            transform.position = _initPosition;
+            TargetTransform.position = _initPosition;
 
             ResetDirection();
         }
@@ -196,14 +178,16 @@ namespace Slingshot
                 return;
             }
             
-            _mouseOffset = (transform.position - _mouseReference);
+            _mouseOffset = (TargetTransform.position - _mouseReference);
 
             var rotation = Vector3.zero;
             rotation.z = (_mouseOffset.x) * _sensitivity;
 
             _game.GameContext.SlingShotLines.Traectory.Rotate(rotation);
 
-            _mouseReference = transform.position;
+            _mouseReference = TargetTransform.position;
         }
+
+        private Transform TargetTransform => _targetSpriteRenderer.transform.parent.transform;
     }
 }

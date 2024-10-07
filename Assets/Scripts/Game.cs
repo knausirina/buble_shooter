@@ -52,7 +52,7 @@ public class Game
         
         _gameContext.SlingShot.Construct(this);
 
-        _gameProcess = new GameProcess(_gameContext, _nextBubbleSystem);
+        _gameProcess = new GameProcess(_gameContext, _nextBubbleSystem, _fieldBuilder.SizeBall);
         
         _gameState = GameState.Play;
         GameStateChanged?.Invoke();

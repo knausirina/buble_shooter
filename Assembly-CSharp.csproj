@@ -48,6 +48,7 @@
     <Compile Include="Assets\Scripts\Field\FielDecoration.cs" />
     <Compile Include="Assets\Scripts\Slingshot\SlingShot.cs" />
     <Compile Include="Assets\Scripts\Field\FieldBuilder.cs" />
+    <Compile Include="Assets\Scripts\GameProcess.cs" />
     <Compile Include="Assets\Scripts\GameLauncher.cs" />
     <Compile Include="Assets\Scripts\Data\BubblesData.cs" />
     <Compile Include="Assets\Scripts\Data\ColorEnum.cs" />
@@ -56,12 +57,14 @@
     <Compile Include="Assets\Scripts\Views\UI\MainMenuView.cs" />
     <Compile Include="Assets\Scripts\Data\BubbleData.cs" />
     <Compile Include="Assets\Scripts\Game.cs" />
+    <Compile Include="Assets\Scripts\Field\NextBubbleSystem.cs" />
     <Compile Include="Assets\Scripts\Views\UI\GameMenuView.cs" />
     <Compile Include="Assets\Scripts\Field\BuilderBubbleDataByString.cs" />
     <Compile Include="Assets\Scripts\Data\ColorConfigData.cs" />
     <Compile Include="Assets\Scripts\Views\BubbleView.cs" />
     <Compile Include="Assets\Scripts\Slingshot\SlingShotLines.cs" />
     <Compile Include="Assets\Scripts\GameContext.cs" />
+    <Compile Include="Assets\Scripts\Field\PoolBalls.cs" />
     <Compile Include="Assets\Scripts\Scenes.cs" />
     <Compile Include="Assets\Scripts\Views\UI\LoaderView.cs" />
     <Compile Include="Assets\Scripts\GameState.cs" />

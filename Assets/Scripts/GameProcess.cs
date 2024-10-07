@@ -1,4 +1,5 @@
 ﻿using Field;
+using UnityEngine;
 
 public class GameProcess
 {
@@ -6,11 +7,13 @@ public class GameProcess
         
     private readonly NextBubbleSystem _nextBubbleSystem;
     private readonly GameContext _gameContext;
+    private float _ballSize;
 
-    public GameProcess(GameContext gameContext, NextBubbleSystem nextBubbleSystem)
+    public GameProcess(GameContext gameContext, NextBubbleSystem nextBubbleSystem, float ballSize)
     {
         _gameContext = gameContext;
         _nextBubbleSystem = nextBubbleSystem;
+        _ballSize = ballSize;
             
         _gameContext.SlingShotLines.ToggleActive(false);
         _gameContext.SlingShot.ToggleActive(false);
@@ -23,6 +26,7 @@ public class GameProcess
             
         var bubbleView = _nextBubbleSystem.GetNextBubble();
         bubbleView.transform.position = worldPosition;
+        bubbleView.transform.localScale = Vector3.one * _ballSize;
 
         _gameContext.SlingShotLines.gameObject.transform.position = worldPosition;
         _gameContext.SlingShotLines.SetHolder(bubbleView.gameObject.transform);
