@@ -1,6 +1,7 @@
 ﻿using System;
 using Data;
 using Field;
+using Slingshot;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
@@ -21,6 +22,8 @@ public class Game
     private FieldBuilder _fieldBuilder;
     private FieldDecoration _fieldDecoration;
     private GameContext _gameContext;
+    private NextBubbleSystem _nextBubbleSystem;
+    private GameProcess _gameProcess;
 
     public GameContext GameContext => _gameContext;
     public Vector2Int FieldSizeInPixels => _fieldSizeInPixels;
@@ -34,7 +37,6 @@ public class Game
     public void Start()
     {
         _fieldDataFromFile ??= new FieldDataFromFile(_config);
-
         
         _bubblesData = (_builderBubbleDataByString ?? new BuilderBubbleDataByString()).GetData(_fieldDataFromFile.GetData(), out _fieldSizeInPixels, out _fieldTypeInPixel);
 
@@ -45,11 +47,17 @@ public class Game
         
         _fieldBuilder ??= new FieldBuilder(_config);
         _fieldBuilder.Build(_gameContext, _bubblesData, _fieldSizeInPixels, _fieldTypeInPixel);
+
+        _nextBubbleSystem = new NextBubbleSystem(_config);
         
-        _gameContext.Slingshot.Construct(this);
+        _gameContext.SlingShot.Construct(this);
+
+        _gameProcess = new GameProcess(_gameContext, _nextBubbleSystem);
         
         _gameState = GameState.Play;
         GameStateChanged?.Invoke();
+        
+        _gameProcess.Run();
     }
 
     public void Stop()

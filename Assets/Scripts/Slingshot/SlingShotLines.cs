@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 namespace Slingshot
 {
@@ -6,16 +7,32 @@ namespace Slingshot
     {
         [SerializeField] private Transform leftAnchor;
         [SerializeField] private Transform rightAnchor;
-        [SerializeField] private Transform ObjectHolder;
         [SerializeField] private Transform _traectory;
         [SerializeField] private LineRenderer[] lines;
         [SerializeField] private GameObject[] points;
+        
+        private Transform _holderTransform;
         
         public Transform Traectory => _traectory;
 
         public void UpdatePositions()
         {
             UpdateBeginPositions();
+        }
+        
+        public void ToggleActive(bool isActive)
+        {
+            gameObject.SetActive(isActive);
+        }
+
+        public void SetHolder(Transform holderTransform)
+        {
+            _holderTransform = holderTransform;
+        }
+
+        private void Awake()
+        {
+            ToggleActive(false);
         }
 
         private void Start()
@@ -33,14 +50,20 @@ namespace Slingshot
 
         private void Update()
         {
+            if (_holderTransform == null)
+            {
+                return;
+            }
+
             foreach (var t in lines)
             {
-                t.SetPosition(1, ObjectHolder.position);
+                t.SetPosition(1, _holderTransform.position);
             }
         }
 
         public void SetPath(bool b)
         {
+            /*
             float yPos = (_traectory.up.y * 50) / points.Length;
             float val = yPos;
             for (int i = 0; i < points.Length; i++)
@@ -50,6 +73,7 @@ namespace Slingshot
                 points[i].transform.localPosition = new Vector3(0, val, -0.8f);
                 val += yPos;
             }
+            */
         }
     }
 }

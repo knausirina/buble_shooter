@@ -4,15 +4,14 @@ namespace Slingshot
 {
     public class SlingShot : MonoBehaviour
     {
-        private const float BORDER_OFFSET_Y_MIN = -0.3f;
-        private const float BORDER_OFFSET_Y_MAX = 0.3f;
+        private const float BorderOffsetYMin = -0.3f;
+        private const float BorderOffsetYMax = 0.3f;
 
         private float _borderXMin;
         private float _borderXMax;
         
         [SerializeField] private float _sensitivity = 40f;
         
-        private SlingShotLines _slingShotLines;
         private Vector3 _offset;
         private Vector3 _initPosition;
         private Vector3 _mouseReference;
@@ -22,7 +21,7 @@ namespace Slingshot
         private float _borderYMax;
         private bool _isBeginTouch = false;
 
-        private SpriteRenderer _spriteRenderer;
+        private SpriteRenderer _targetSpriteRenderer;
         private Game _game;
         
         public void Construct(Game game)
@@ -30,27 +29,38 @@ namespace Slingshot
             _game = game;
             _game.GameStateChanged += OnGameStateChanged;
 
-            _borderYMin = transform.position.y + BORDER_OFFSET_Y_MIN;
-            _borderYMax = transform.position.y + BORDER_OFFSET_Y_MAX;
+            _borderYMin = transform.position.y + BorderOffsetYMin;
+            _borderYMax = transform.position.y + BorderOffsetYMax;
             
             var field = game.GameContext.FieldRectTransform;
             var corners = new Vector3[4];
             field.GetWorldCorners(corners);
             _borderXMin = corners[0].x + 0.1f;
             _borderXMax = corners[3].x - 0.1f;
+        }
 
-            _slingShotLines.UpdatePositions();
+        public void ToggleActive(bool isActive)
+        {
+            gameObject.SetActive(isActive);
+        }
+
+        public void SetTargetSpriteRenderer(SpriteRenderer spriteRenderer)
+        {
+            _targetSpriteRenderer = spriteRenderer;
+            _game.GameContext.SlingShotLines.UpdatePositions();
         }
 
         private void Awake()
         {
-            _spriteRenderer = GetComponent<SpriteRenderer>();
-            _slingShotLines = FindObjectOfType<SlingShotLines>();
+            ToggleActive(false);
         }
 
         private void OnDestroy()
         {
-            _game.GameStateChanged -= OnGameStateChanged;
+            if (_game != null)
+            {
+                _game.GameStateChanged -= OnGameStateChanged;
+            }
         }
 
         private void OnGameStateChanged()
@@ -141,8 +151,8 @@ namespace Slingshot
 
             _offset = _initPosition - _game.GameContext.Camera.ScreenToWorldPoint(position);
 
-            _slingShotLines.Traectory.eulerAngles = Vector3.zero;
-            _slingShotLines.SetPath(true);
+            _game.GameContext.SlingShotLines.Traectory.eulerAngles = Vector3.zero;
+            _game.GameContext.SlingShotLines.SetPath(true);
         }
 
         private void OnMove()
@@ -150,11 +160,12 @@ namespace Slingshot
             var position = GetTouchPosition();
             var curScreenPoint = new Vector3(position.x, position.y, _game.GameContext.Camera.nearClipPlane);
             var curPosition = _game.GameContext.Camera.ScreenToWorldPoint(curScreenPoint) + _offset;
-            transform.position = curPosition;
 
-            var posX = Mathf.Clamp(transform.position.x, _borderXMin, _borderXMax);
-            var posY = Mathf.Clamp(transform.position.y, _borderYMin, _borderYMax);
-            transform.position = new Vector3 (posX, posY, curPosition.z);
+            var targetTransform = _targetSpriteRenderer.transform.parent.transform;
+            targetTransform.position = curPosition;
+            var posX = Mathf.Clamp(targetTransform.position.x, _borderXMin, _borderXMax);
+            var posY = Mathf.Clamp(targetTransform.position.y, _borderYMin, _borderYMax);
+            targetTransform.position = new Vector3 (posX, posY, curPosition.z);
         }
         
         private void OnEndTouch()
@@ -169,13 +180,13 @@ namespace Slingshot
         {
             Vector2 mousePosition = _game.GameContext.Camera.ScreenToWorldPoint(position);
 
-            return _spriteRenderer.bounds.Contains(mousePosition);
+            return _targetSpriteRenderer.bounds.Contains(mousePosition);
         }
 
         private void ResetDirection()
         {
-            _slingShotLines.Traectory.eulerAngles = Vector3.zero;
-            _slingShotLines.SetPath(false);
+            _game.GameContext.SlingShotLines.Traectory.eulerAngles = Vector3.zero;
+            _game.GameContext.SlingShotLines.SetPath(false);
         }
 
         private void SetDirection()
@@ -190,7 +201,7 @@ namespace Slingshot
             var rotation = Vector3.zero;
             rotation.z = (_mouseOffset.x) * _sensitivity;
 
-            _slingShotLines.Traectory.Rotate(rotation);
+            _game.GameContext.SlingShotLines.Traectory.Rotate(rotation);
 
             _mouseReference = transform.position;
         }

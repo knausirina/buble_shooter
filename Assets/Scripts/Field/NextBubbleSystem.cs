@@ -1,0 +1,32 @@
+﻿using Data;
+using UnityEngine;
+using Views;
+
+namespace Field
+{
+    public class NextBubbleSystem
+    {
+        private readonly PoolBalls _poolBalls;
+        private readonly Config _config;
+
+        public NextBubbleSystem(Config config)
+        {
+            _config = config;
+            _poolBalls = new PoolBalls(_config.BubbleView.gameObject);
+        }
+
+        public BubbleView GetNextBubble()
+        {
+            var bubbleView = _poolBalls.Pool.Get();
+            var color = Random.Range(1, System.Enum.GetValues(typeof(ColorEnum)).Length);
+            var colorEnum = (ColorEnum)color;
+            bubbleView.SetColor(_config.GetColor(colorEnum));
+            return bubbleView;
+        }
+
+        public void ReturnBubble(BubbleView bubbleView)
+        {
+            _poolBalls.Pool.Release(bubbleView);
+        }
+    }
+}
