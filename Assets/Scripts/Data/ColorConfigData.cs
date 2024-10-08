@@ -8,5 +8,6 @@ namespace Data
     {
         public ColorEnum ColorEnum;
         public Color Color;
+        public Char Char;
     }
 }

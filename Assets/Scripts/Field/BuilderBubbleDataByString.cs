@@ -7,10 +7,17 @@ namespace Field
 {
     public class BuilderBubbleDataByString
     {
-        private readonly char _emptySymbol = '0';
-        private const int NUM_ROW_WITH_COUNTS_BUBBLES = 0;
-        private const int NUM_ROW_WITH_SIZE_FIELD = 1;
-        
+        private const char EmptySymbol = '0';
+        private const int NumRowWithCountsBubbles = 0;
+        private const int NumRowWithSizeField = 1;
+
+        private readonly Config _config;
+
+        public BuilderBubbleDataByString(Config config)
+        {
+            _config = config;
+        }
+
         public BubblesData GetData(string text, out Vector2Int fieldSizeInPixel, out Vector2Int fieldSizeInElements)
         {
             fieldSizeInPixel = Vector2Int.zero;
@@ -27,7 +34,7 @@ namespace Field
 
                     switch (i)
                     {
-                        case NUM_ROW_WITH_COUNTS_BUBBLES:
+                        case NumRowWithCountsBubbles:
                         {
                             var values = line.Split(' ');
                             var width = int.Parse(values[0]);
@@ -35,7 +42,7 @@ namespace Field
                             fieldSizeInPixel = new Vector2Int(width, height);
                             break;
                         }
-                        case NUM_ROW_WITH_SIZE_FIELD:
+                        case NumRowWithSizeField:
                         {
                             var values = line.Split(' ');
                             var columns = int.Parse(values[0]);
@@ -49,14 +56,9 @@ namespace Field
                             for (var j = 0; j < line.Length; j++)
                             {
                                 var symbol = line[j];
-                                if (symbol != _emptySymbol)
+                                if (symbol != EmptySymbol)
                                 {
-                                    ColorEnum colorEnum = ColorEnum.Blue;
-                                    if (!MapColors.GetColorEnum(symbol, out colorEnum))
-                                    {
-                                        Debug.LogWarning($"Incorrect color = {symbol}");
-                                    }
-
+                                    var colorEnum = _config.GetColorByChar(symbol);
                                     dataInRow.Add(new BubbleData(colorEnum, new Vector2Int(i, j)));
                                 }
                                 else

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Data;
 using UnityEngine;
 using Views;
@@ -12,13 +13,14 @@ public class Config : ScriptableObject
     [SerializeField] private int _shooterHeight;
     
     private Dictionary<ColorEnum, Color> _colorsByEnum;
+    private Dictionary<Char, ColorEnum> _colorEnumsByChar;
     
     public BubbleView BubbleView => _bubbleView;
     public IReadOnlyList<ColorConfigData> BubbleData => _colorData;
     public TextAsset FieldTextAsset => _fieldTextAsset;
     public int ShooterHeight => _shooterHeight;
     
-    public Color GetColor(ColorEnum colorEnum)
+    public Color GetColorByEnum(ColorEnum colorEnum)
     {
         if (_colorsByEnum == null)
         {
@@ -28,7 +30,19 @@ public class Config : ScriptableObject
                 _colorsByEnum[item.ColorEnum] = item.Color;
             }
         }
-        _colorsByEnum.TryGetValue(colorEnum, out var result);
-        return result;
+        return _colorsByEnum[colorEnum];
+    }
+
+    public ColorEnum GetColorByChar(char colorChar)
+    {
+        if (_colorEnumsByChar == null)
+        {
+            _colorEnumsByChar = new Dictionary<Char, ColorEnum>();
+            foreach (var item in _colorData)
+            {
+                _colorEnumsByChar[item.Char] = item.ColorEnum;
+            }
+        }
+        return _colorEnumsByChar[colorChar];
     }
 }

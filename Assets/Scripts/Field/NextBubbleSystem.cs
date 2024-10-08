@@ -20,7 +20,7 @@ namespace Field
             var bubbleView = _poolBalls.Pool.Get();
             var color = Random.Range(1, System.Enum.GetValues(typeof(ColorEnum)).Length);
             var colorEnum = (ColorEnum)color;
-            bubbleView.SetColor(_config.GetColor(colorEnum));
+            bubbleView.SetColor(_config.GetColorByEnum(colorEnum));
             return bubbleView;
         }
 

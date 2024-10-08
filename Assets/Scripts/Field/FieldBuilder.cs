@@ -45,7 +45,7 @@ namespace Field
                     var pos = new Vector2(j * (_sizeBall + offset) + 3 * remainder * offset, -i * (_sizeBall + offset));
                     var view = Object.Instantiate(_config.BubbleView, Vector3.zero, Quaternion.identity, gameContext.BubblesViewRoot);
                     view.transform.localPosition = pos;
-                    view.Renderer.color = _config.GetColor(bubbleData.Color);
+                    view.Renderer.color = _config.GetColorByEnum(bubbleData.Color);
                     view.Renderer.gameObject.transform.localScale = new Vector3(_sizeBall, _sizeBall, 1);
                 }
             }

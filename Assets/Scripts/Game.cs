@@ -38,7 +38,7 @@ public class Game
     {
         _fieldDataFromFile ??= new FieldDataFromFile(_config);
         
-        _bubblesData = (_builderBubbleDataByString ?? new BuilderBubbleDataByString()).GetData(_fieldDataFromFile.GetData(), out _fieldSizeInPixels, out _fieldTypeInPixel);
+        _bubblesData = (_builderBubbleDataByString ?? new BuilderBubbleDataByString(_config)).GetData(_fieldDataFromFile.GetData(), out _fieldSizeInPixels, out _fieldTypeInPixel);
 
         _gameContext = Object.FindObjectOfType<GameContext>();
         
