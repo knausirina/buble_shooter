@@ -7,6 +7,8 @@ namespace Slingshot
         private const float BorderOffsetYMin = -0.3f;
         private const float BorderOffsetYMax = 0.3f;
 
+        [SerializeField] private GameObject _line;
+
         private float _borderXMin;
         private float _borderXMax;
         
@@ -14,7 +16,7 @@ namespace Slingshot
         
         private Vector3 _offset;
         private Vector3 _initPosition;
-        private Vector3 _mouseReference;
+        private Vector3 _touchBegin;
         private Vector3 _mouseOffset;
         private bool _isRotating;
         private float _borderYMin;
@@ -27,15 +29,9 @@ namespace Slingshot
         public void Construct(Game game)
         {
             _game = game;
-
-            _borderYMin = transform.position.y + BorderOffsetYMin;
-            _borderYMax = transform.position.y + BorderOffsetYMax;
             
-            var field = game.GameContext.FieldRectTransform;
-            var corners = new Vector3[4];
-            field.GetWorldCorners(corners);
-            _borderXMin = corners[0].x + 0.1f;
-            _borderXMax = corners[3].x - 0.1f;
+            _borderXMin = -0.6f;
+            _borderXMax = 0.6f;
         }
 
         public void ToggleActive(bool isActive)
@@ -50,14 +46,50 @@ namespace Slingshot
         public void SetTargetSpriteRenderer(SpriteRenderer spriteRenderer)
         {
             _targetSpriteRenderer = spriteRenderer;
+
+            _borderYMin = TargetTransform.position.y;
+            _borderYMax = TargetTransform.position.y;// + BorderOffsetYMax;
+            
             _game.GameContext.SlingShotLines.UpdatePositions();
+
+            _line.transform.position = TargetTransform.position;
         }
 
         private void Awake()
         {
             ToggleActive(false);
         }
-        
+
+        private void DrawLine()
+        {
+            var lookDirection = Camera.main.ScreenToWorldPoint(Input.mousePosition) - _touchBegin;
+            var lookAngle = Mathf.Atan2(lookDirection.y, lookDirection.x) * Mathf.Rad2Deg; 
+            
+            lookAngle = Mathf.Clamp(lookAngle, -158, -23);
+           
+            if (Input.GetMouseButton(0))
+            {
+              _line.transform.rotation = Quaternion.Euler(0f, 0f, lookAngle + 90);
+
+               _line.SetActive(true);
+            }
+           else
+           {
+           }
+/*
+           if (canShoot
+               && Input.GetMouseButtonUp(0)
+               && (Camera.main.ScreenToWorldPoint(Input.mousePosition).y > bottomShootPoint.transform.position.y)
+               && (Camera.main.ScreenToWorldPoint(Input.mousePosition).y < limit.transform.position.y))
+                    {
+                        canShoot = false;
+                        Shoot();
+                    }
+                }
+            }
+            */
+        }
+
         private void Update()
         {
             if (_game == null)
@@ -74,7 +106,6 @@ namespace Slingshot
             if (Input.GetMouseButtonDown(0))
             {
                 OnBeginTouch();
-                _isBeginTouch = true;
             }
 
             if (Input.GetMouseButtonUp(0))
@@ -107,6 +138,10 @@ namespace Slingshot
 
             
 #endif
+            if (_isBeginTouch)
+            {
+                DrawLine();
+            }
             
             SetDirection();
         }
@@ -130,7 +165,8 @@ namespace Slingshot
 
             _isRotating = true;
 
-            _mouseReference = transform.position;
+            _touchBegin = TargetTransform.position;
+            _isBeginTouch = true;
 
             _offset = _initPosition - _game.GameContext.Camera.ScreenToWorldPoint(position);
 
@@ -148,11 +184,14 @@ namespace Slingshot
             var posX = Mathf.Clamp(TargetTransform.position.x, _borderXMin, _borderXMax);
             var posY = Mathf.Clamp(TargetTransform.position.y, _borderYMin, _borderYMax);
             TargetTransform.position = new Vector3 (posX, posY, curPosition.z);
+            
+            _line.transform.position = TargetTransform.position;
         }
         
         private void OnEndTouch()
         {
-            _isRotating = false;
+            _isRotating = false; 
+            _line.SetActive(false);
             TargetTransform.position = _initPosition;
 
             ResetDirection();
@@ -160,8 +199,8 @@ namespace Slingshot
 
         private bool IsTouchTargetObject(Vector3 position)
         {
-            Vector2 mousePosition = _game.GameContext.Camera.ScreenToWorldPoint(position);
-
+            position.z = _game.GameContext.Camera.nearClipPlane;
+            var mousePosition = _game.GameContext.Camera.ScreenToWorldPoint(position);
             return _targetSpriteRenderer.bounds.Contains(mousePosition);
         }
 
@@ -178,14 +217,14 @@ namespace Slingshot
                 return;
             }
             
-            _mouseOffset = (TargetTransform.position - _mouseReference);
+            _mouseOffset = (TargetTransform.position - _touchBegin);
 
             var rotation = Vector3.zero;
             rotation.z = (_mouseOffset.x) * _sensitivity;
 
             _game.GameContext.SlingShotLines.Traectory.Rotate(rotation);
 
-            _mouseReference = TargetTransform.position;
+            _touchBegin = TargetTransform.position;
         }
 
         private Transform TargetTransform => _targetSpriteRenderer.transform.parent.transform;
