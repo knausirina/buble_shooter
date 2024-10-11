@@ -10,7 +10,7 @@ public class Config : ScriptableObject
     [SerializeField] private BubbleView _bubbleView;
     [SerializeField] private ColorConfigData[] _colorData;
     [SerializeField] private TextAsset _fieldTextAsset;
-    [SerializeField] private int _shooterHeight;
+    [SerializeField] private float _shooterHeight;
     
     private Dictionary<ColorEnum, Color> _colorsByEnum;
     private Dictionary<Char, ColorEnum> _colorEnumsByChar;
@@ -18,7 +18,7 @@ public class Config : ScriptableObject
     public BubbleView BubbleView => _bubbleView;
     public IReadOnlyList<ColorConfigData> BubbleData => _colorData;
     public TextAsset FieldTextAsset => _fieldTextAsset;
-    public int ShooterHeight => _shooterHeight;
+    public float ShooterHeight => _shooterHeight;
     
     public Color GetColorByEnum(ColorEnum colorEnum)
     {

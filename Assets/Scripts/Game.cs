@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Resources;
 using Data;
 using Field;
 using Slingshot;
@@ -43,7 +44,7 @@ public class Game
         _gameContext = Object.FindObjectOfType<GameContext>();
         
         _fieldDecoration ??= new FieldDecoration();
-        _fieldDecoration.Build(this, _bubblesData);
+        _fieldDecoration.Build(this);
         
         _fieldBuilder ??= new FieldBuilder(_config);
         _fieldBuilder.Build(_gameContext, _bubblesData, _fieldSizeInPixels, _fieldTypeInPixel);
@@ -52,7 +53,7 @@ public class Game
         
         _gameContext.SlingShot.Construct(this);
 
-        _gameProcess = new GameProcess(_gameContext, _nextBubbleSystem, _fieldBuilder.SizeBall);
+        _gameProcess = new GameProcess(this, _config, _nextBubbleSystem, _fieldBuilder.SizeBall);
         
         _gameState = GameState.Play;
         GameStateChanged?.Invoke();

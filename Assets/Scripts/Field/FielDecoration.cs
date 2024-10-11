@@ -1,13 +1,10 @@
-﻿using Data;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace Field
 {
     public class FieldDecoration
     {
-        
-        
-        public void Build(Game game, BubblesData bubblesData)
+        public void Build(Game game)
         {
             var gameContext = game.GameContext;
             
