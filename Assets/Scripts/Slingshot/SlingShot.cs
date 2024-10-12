@@ -7,9 +7,6 @@ namespace Slingshot
     {
         private const float BorderOffsetYMin = -1f;
 
-        private float _borderXMin;
-        private float _borderXMax;
-
         [SerializeField] private GameObject _line;
         [SerializeField] private float _sensitivity = 40f;
         [SerializeField] private Transform _pointTransform;
@@ -35,9 +32,6 @@ namespace Slingshot
         public void Construct(Game game)
         {
             _game = game;
-
-            _borderXMin = -1.5f;
-            _borderXMax = 0.5f;
         }
 
         public void ToggleActive(bool isActive)
@@ -157,99 +151,36 @@ namespace Slingshot
 
             _isRotating = true;
 
-            var pos2 = (Vector3)position;
-          //  pos2.z = _game.GameContext.Camera.nearClipPlane;
-            _touchBegin = _game.GameContext.Camera.ScreenToWorldPoint(pos2);
+            _touchBegin = _game.GameContext.Camera.ScreenToWorldPoint(position);
             _isBeginTouch = true;
 
-            _offset = _initPosition - _game.GameContext.Camera.ScreenToWorldPoint(position);
+            _offset = _initPosition - _touchBegin;
         }
-
-        private GameObject _centerGO;
 
         private void OnMove()
         {
             var position = GetTouchPosition();
-            var curScreenPoint = new Vector3(position.x, position.y, _game.GameContext.Camera.nearClipPlane);
-            var curPosition = _game.GameContext.Camera.ScreenToWorldPoint(curScreenPoint) + _offset;
-            
-            //TargetTransform.position = curPosition;
-            
-            
-            Debug.Log("xxx TargetTransform.position=" + TargetTransform.position + " _initPosition =" + _initPosition);
+            var screenPoint = new Vector3(position.x, position.y, _game.GameContext.Camera.nearClipPlane);
+            var currentPosition = _game.GameContext.Camera.ScreenToWorldPoint(screenPoint) + _offset;
 
             var r = 1f;
             
             var centerCircle = _initPosition;
             centerCircle.y = -0.36f;
-
-            /*
-            if (_centerGO == null)
-            {
-                _centerGO = Instantiate(_prefab);
-                _centerGO.transform.localScale = Vector3.one * 0.2f;
-                
-                var _centerGO2 = Instantiate(_prefab);
-                _centerGO2.name = "_centerGO2";
-                _centerGO2.transform.localScale = Vector3.one * 0.2f;
-                _centerGO2.transform.position = new Vector3(centerCircle.x, centerCircle.y + r, centerCircle.z);
-                
-                var _centerGO3 = Instantiate(_prefab);
-                _centerGO3.name = "_centerGO3";
-                _centerGO3.transform.localScale = Vector3.one * 0.2f;
-                _centerGO3.transform.position = new Vector3(centerCircle.x, centerCircle.y - r, centerCircle.z);
-                
-                var _centerGO4 = Instantiate(_prefab);
-                _centerGO4.name = "_centerGO4";
-                _centerGO4.transform.localScale = Vector3.one * 0.2f;
-                _centerGO4.transform.position = new Vector3(centerCircle.x + r, centerCircle.y, centerCircle.z);
-                
-                var _centerGO5 = Instantiate(_prefab);
-                _centerGO5.name = "_centerGO5";
-                _centerGO5.transform.localScale = Vector3.one * 0.2f;
-                _centerGO5.transform.position = new Vector3(centerCircle.x - r, centerCircle.y, centerCircle.z);
-            }
-            _centerGO.transform.position = centerCircle;
-*/
-            var v = curPosition - centerCircle;
+            
+            var v = currentPosition - centerCircle;
             var vNormalized = v.normalized * r;
             var pos = centerCircle +  vNormalized;
-            
-            var center = centerCircle;
-            Debug.Log("xxx _initPosition2 = " + centerCircle);
-            
-            var point = TargetTransform.position;
-            var c = Math.Sqrt(Math.Pow(Math.Abs(center.x - point.x), 2) + Math.Pow(Math.Abs(center.y - point.y), 2));
-            Debug.Log("xxx c = " + c + " r = " + r);
 
-            Vector2 coordinates;
-           // if (c > r)                 
-            {
-          //      coordinates.x = (float)(TargetTransform.position.x * r / c);
-          //      coordinates.y = (float)(TargetTransform.position.y * r / c);
-            }
-          //  else
-            {
-                coordinates.x = curPosition.x;
-                coordinates.y = curPosition.y;
-            }
-
-            var d = -0.342f + 0.8425927f;
+            var coordinates = new Vector2(currentPosition.x, currentPosition.y);
             
-            var posX = Mathf.Clamp(TargetTransform.position.x, _borderXMin, _borderXMax);
-            var posY = Mathf.Clamp(TargetTransform.position.y, _borderYMin, _borderYMax);
-           // TargetTransform.position = new Vector3 (posX, posY, curPosition.z);
-
-           Debug.Log("xxx coordinates " + coordinates);
-            //TargetTransform.position = new Vector3(coordinates.x, coordinates.y, curPosition.z);
-            Debug.Log("xxx vNormalized.magnitude   " + vNormalized.magnitude );
             if (v.sqrMagnitude > r)
             {
-                TargetTransform.position = new Vector3(pos.x, pos.y, curPosition.z);
+                TargetTransform.position = new Vector3(pos.x, pos.y, currentPosition.z);
             }
             else
             {
-                TargetTransform.position = new Vector3(coordinates.x, coordinates.y, curPosition.z);
+                TargetTransform.position = new Vector3(coordinates.x, coordinates.y, currentPosition.z);
             }
             
             var posY2 = Mathf.Clamp(TargetTransform.position.y, _borderYMin, _borderYMax);
