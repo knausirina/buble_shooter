@@ -1,5 +1,4 @@
-﻿using System;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace Slingshot
 {
@@ -9,21 +8,17 @@ namespace Slingshot
         private const float Radius = 1f;
 
         [SerializeField] private GameObject _line;
-        [SerializeField] private float _sensitivity = 40f;
         [SerializeField] private Transform _pointTransform;
         [SerializeField] private Transform AimerTransform;
         [SerializeField] private Transform ReleasePointTransform;
-
-        [SerializeField] private GameObject _prefab;
 
         private Vector3 _offset;
         private Vector3 _initPosition;
         private Vector3 _touchBegin;
         private Vector3 _mouseOffset;
-        private bool _isRotating;
         private float _borderYMin;
         private float _borderYMax;
-        private bool _isBeginTouch = false;
+        private bool _isBeginTouch;
 
         private SpriteRenderer _targetSpriteRenderer;
         private Game _game;
@@ -50,7 +45,7 @@ namespace Slingshot
 
             _borderYMin = TargetTransform.position.y + BorderOffsetYMin;
             _borderYMax = TargetTransform.position.y;
-
+            
             _game.GameContext.SlingShotLines.UpdatePositions();
 
             _line.transform.position = TargetTransform.position;
@@ -150,8 +145,6 @@ namespace Slingshot
                 return;
             }
 
-            _isRotating = true;
-
             _touchBegin = _game.GameContext.Camera.ScreenToWorldPoint(position);
             _isBeginTouch = true;
 
@@ -188,7 +181,6 @@ namespace Slingshot
         
         private void OnEndTouch()
         {
-            _isRotating = false; 
            _line.SetActive(false);
             TargetTransform.position = _initPosition;
         }
