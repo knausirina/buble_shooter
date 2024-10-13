@@ -6,6 +6,7 @@ namespace Slingshot
     public class SlingShot : MonoBehaviour
     {
         private const float BorderOffsetYMin = -1f;
+        private const float Radius = 1f;
 
         [SerializeField] private GameObject _line;
         [SerializeField] private float _sensitivity = 40f;
@@ -162,20 +163,16 @@ namespace Slingshot
             var position = GetTouchPosition();
             var screenPoint = new Vector3(position.x, position.y, _game.GameContext.Camera.nearClipPlane);
             var currentPosition = _game.GameContext.Camera.ScreenToWorldPoint(screenPoint) + _offset;
-
-            var r = 1f;
             
-            var centerCircle = _initPosition;
-            centerCircle.y = -0.36f;
-            
-            var v = currentPosition - centerCircle;
-            var vNormalized = v.normalized * r;
-            var pos = centerCircle +  vNormalized;
+            var centerCircle = new Vector3(_initPosition.x, _initPosition.y -0.36f, _initPosition.z);
+            var direction = currentPosition - centerCircle;
 
             var coordinates = new Vector2(currentPosition.x, currentPosition.y);
             
-            if (v.sqrMagnitude > r)
+            if (direction.sqrMagnitude > Radius)
             {
+                var directionWithLenghtRadius = direction.normalized * Radius;
+                var pos = centerCircle +  directionWithLenghtRadius;
                 TargetTransform.position = new Vector3(pos.x, pos.y, currentPosition.z);
             }
             else
