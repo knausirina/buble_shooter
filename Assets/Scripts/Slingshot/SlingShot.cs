@@ -8,9 +8,8 @@ namespace Slingshot
         private const float Radius = 1f;
 
         [SerializeField] private GameObject _line;
-        [SerializeField] private Transform _pointTransform;
-        [SerializeField] private Transform AimerTransform;
-        [SerializeField] private Transform ReleasePointTransform;
+        [SerializeField] private Transform _releasePointTransform;
+        [SerializeField] private SlingShotLines _slingShotLines;
 
         private Vector3 _offset;
         private Vector3 _initPosition;
@@ -62,24 +61,19 @@ namespace Slingshot
             {
                 return;
             }
-
-            UpdateAim();
-            var lookDirection = GetShotDirection();
+            
+            var lookDirection = GetDirection();
             var lookAngle = Mathf.Atan2(lookDirection.y, lookDirection.x) * Mathf.Rad2Deg;
             
             _line.transform.rotation = Quaternion.Euler(0f, 0f, lookAngle - 90);
             _line.SetActive(true);
         }
         
-        private void UpdateAim()
+        private Vector3 GetDirection()
         {
-            var pullDirection = ReleasePointTransform.position - (TargetTransform.position - _pointTransform.position).normalized;
-            AimerTransform.position = pullDirection;
-        }
-
-        private Vector3 GetShotDirection()
-        {
-            return (AimerTransform.position - _pointTransform.position).normalized;
+            var positionBall = _slingShotLines.gameObject.transform.position;
+            var pullDirection = _releasePointTransform.position - (TargetTransform.position - positionBall).normalized;
+            return (pullDirection- positionBall).normalized;
         }
 
         private void Update()
@@ -122,8 +116,6 @@ namespace Slingshot
                     OnEndTouch();
                 }
             }
-
-            
 #endif
             DrawLine();
         }

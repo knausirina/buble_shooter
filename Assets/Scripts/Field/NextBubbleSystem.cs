@@ -9,10 +9,10 @@ namespace Field
         private readonly PoolBalls _poolBalls;
         private readonly Config _config;
 
-        public NextBubbleSystem(Config config)
+        public NextBubbleSystem(Config config, PoolBalls poolBalls)
         {
             _config = config;
-            _poolBalls = new PoolBalls(_config.BubbleView.gameObject);
+            _poolBalls = poolBalls;
         }
 
         public BubbleView GetNextBubble()

@@ -24,6 +24,7 @@ public class Game
     private FieldDecoration _fieldDecoration;
     private GameContext _gameContext;
     private NextBubbleSystem _nextBubbleSystem;
+    private PoolBalls _poolBalls;
     private GameProcess _gameProcess;
 
     public GameContext GameContext => _gameContext;
@@ -49,7 +50,8 @@ public class Game
         _fieldBuilder ??= new FieldBuilder(_config);
         _fieldBuilder.Build(_gameContext, _bubblesData, _fieldSizeInPixels, _fieldTypeInPixel);
 
-        _nextBubbleSystem = new NextBubbleSystem(_config);
+        _poolBalls = new PoolBalls(_config.BubbleView.gameObject);
+        _nextBubbleSystem = new NextBubbleSystem(_config, _poolBalls);
         
         _gameContext.SlingShot.Construct(this);
 
