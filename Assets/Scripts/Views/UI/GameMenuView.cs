@@ -17,7 +17,7 @@ namespace Views.UI
          _gameLauncher = FindObjectOfType<GameLauncher>();
          
          _menuButton.onClick.AddListener(OnMenuButton);
-               _startGameButton.onClick.AddListener(OnStartGameButton);
+         _startGameButton.onClick.AddListener(OnStartGameButton);
       }
 
       private void OnStartGameButton()
@@ -27,12 +27,9 @@ namespace Views.UI
 
       private void OnMenuButton()
       {
-         OnMenuButtonAsync().Forget(Debug.LogError);
-      }
-
-      private void OnStopGameButton()
-      {
+         _gameLauncher.StopGame();
          
+         OnMenuButtonAsync().Forget(Debug.LogError);
       }
 
       private async UniTask OnMenuButtonAsync()
@@ -47,6 +44,7 @@ namespace Views.UI
       private void OnDestroy()
       {
          _menuButton.onClick.RemoveListener(OnMenuButton);
+         _startGameButton.onClick.RemoveListener(OnStartGameButton);
       }
    }
 }

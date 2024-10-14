@@ -31,11 +31,6 @@
 
      public void StopGame()
      {
-         if (_game == null)
-         {
-             return;
-         }
-
-         _game.Stop();
+         _game?.Stop();
      }
  }

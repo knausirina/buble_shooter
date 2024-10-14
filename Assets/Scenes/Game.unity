@@ -451,7 +451,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!120 &477310493
 LineRenderer:
   serializedVersion: 2
@@ -1423,7 +1423,6 @@ MonoBehaviour:
   _rightLineTransform: {fileID: 477310495}
   _releasePointTransform: {fileID: 508647707}
   _slingShotLines: {fileID: 374119231}
-  _go: {fileID: 8123065859792797419, guid: fa38ec85819cc452ea4059912b611d1c, type: 3}
 --- !u!1 &1209784190
 GameObject:
   m_ObjectHideFlags: 0
@@ -1863,7 +1862,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!120 &2018890298
 LineRenderer:
   serializedVersion: 2
