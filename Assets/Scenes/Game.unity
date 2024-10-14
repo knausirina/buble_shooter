@@ -1418,9 +1418,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 94be89f7c45541fe9ae6d2dbe6522ff9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _line: {fileID: 596627892}
+  _centerLineTransform: {fileID: 596627895}
+  _leftLineTransform: {fileID: 2018890300}
+  _rightLineTransform: {fileID: 477310495}
   _releasePointTransform: {fileID: 508647707}
   _slingShotLines: {fileID: 374119231}
+  _go: {fileID: 8123065859792797419, guid: fa38ec85819cc452ea4059912b611d1c, type: 3}
 --- !u!1 &1209784190
 GameObject:
   m_ObjectHideFlags: 0

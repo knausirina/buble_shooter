@@ -5,9 +5,11 @@ namespace Slingshot
     public class SlingShot : MonoBehaviour
     {
         private const float BorderOffsetYMin = -1f;
-        private const float Radius = 1f;
+        private const float Radius = 0.8f;
 
-        [SerializeField] private GameObject _line;
+        [SerializeField] private Transform _centerLineTransform;
+        [SerializeField] private Transform _leftLineTransform;
+        [SerializeField] private Transform _rightLineTransform;
         [SerializeField] private Transform _releasePointTransform;
         [SerializeField] private SlingShotLines _slingShotLines;
 
@@ -47,7 +49,7 @@ namespace Slingshot
             
             _game.GameContext.SlingShotLines.UpdatePositions();
 
-            _line.transform.position = TargetTransform.position;
+            _centerLineTransform.transform.position = TargetTransform.position;
         }
 
         private void Awake()
@@ -65,8 +67,11 @@ namespace Slingshot
             var lookDirection = GetDirection();
             var lookAngle = Mathf.Atan2(lookDirection.y, lookDirection.x) * Mathf.Rad2Deg;
             
-            _line.transform.rotation = Quaternion.Euler(0f, 0f, lookAngle - 90);
-            _line.SetActive(true);
+            _centerLineTransform.transform.rotation = Quaternion.Euler(0f, 0f, lookAngle - 90);
+            _centerLineTransform.gameObject.SetActive(true);
+            
+            _leftLineTransform.transform.rotation = Quaternion.Euler(0f, 0f, lookAngle - 90 - 10);
+            _rightLineTransform.transform.rotation = Quaternion.Euler(0f, 0f, lookAngle - 90 + 10);
         }
         
         private Vector3 GetDirection()
@@ -165,15 +170,17 @@ namespace Slingshot
                 TargetTransform.position = new Vector3(coordinates.x, coordinates.y, currentPosition.z);
             }
             
-            var posY2 = Mathf.Clamp(TargetTransform.position.y, _borderYMin, _borderYMax);
-            TargetTransform.position = new Vector3(TargetTransform.position.x, posY2, TargetTransform.position.z);
+            var clampYPosition = Mathf.Clamp(TargetTransform.position.y, _borderYMin, _borderYMax);
+            TargetTransform.position = new Vector3(TargetTransform.position.x, clampYPosition, TargetTransform.position.z);
             
-            _line.transform.position = TargetTransform.position;
+            _centerLineTransform.position = TargetTransform.position;
+            _leftLineTransform.position = TargetTransform.position;
+            _rightLineTransform.position = TargetTransform.position;
         }
         
         private void OnEndTouch()
         {
-           _line.SetActive(false);
+            _centerLineTransform.gameObject.SetActive(false);
             TargetTransform.position = _initPosition;
         }
 
