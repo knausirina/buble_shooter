@@ -20,10 +20,10 @@ public class GameProcess
     {
         _game.GameContext.SlingShotLines.ToggleActive(false);
         _game.GameContext.SlingShot.ToggleActive(false);
-        
+
         var worldPosition = _game.GameContext.GetBottomPointOfFiledWorldPosition();
         worldPosition.y += _config.ShooterHeight;
-            
+
         var bubbleView = _nextBubbleSystem.GetNextBubble();
         bubbleView.transform.position = worldPosition;
         bubbleView.transform.localScale = Vector3.one * _ballSize;
@@ -31,8 +31,7 @@ public class GameProcess
         _game.GameContext.SlingShotLines.gameObject.transform.position = worldPosition;
         _game.GameContext.SlingShotLines.SetHolder(bubbleView.gameObject.transform);
         _game.GameContext.SlingShot.SetTargetSpriteRenderer(bubbleView.Renderer);
-            
-        _game.GameContext.SlingShotLines.UpdatePositions();
+        
         _game.GameContext.SlingShotLines.ToggleActive(true);
         _game.GameContext.SlingShot.ToggleActive(true);
     }
