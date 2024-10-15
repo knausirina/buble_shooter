@@ -5,22 +5,26 @@ namespace Slingshot
 {
     public class FlyBall
     {
+        private float Speed = 5;
+        
         private bool _startMove = false;
         private Vector3 _beginPos;
 
         private GameContext _gameContext;
         private Vector3 _direction;
         private Transform _targetTransform;
+        private float _coefficientSpeed;
         
         public void Construct(GameContext gameContext)
         {
             _gameContext = gameContext;
         }
 
-        public void StartMove(Vector3 direction, Transform targetTransform)
+        public void StartMove(Vector3 direction, Transform targetTransform, float coefficientSpeed)
         {
             _direction = direction;
             _targetTransform = targetTransform;
+            _coefficientSpeed = coefficientSpeed;
 
             _startMove = true;
         }
@@ -59,7 +63,7 @@ namespace Slingshot
             }
 
             _targetTransform.position = Vector3.MoveTowards(_targetTransform.position,
-                _beginPos +  _direction.normalized * 1000, 1f * Time.deltaTime);
+                _beginPos +  _direction.normalized * 1000 , _coefficientSpeed * Speed * Time.deltaTime);
             
         }
     }

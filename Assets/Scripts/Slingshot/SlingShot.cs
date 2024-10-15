@@ -201,10 +201,16 @@ namespace Slingshot
            ToggleShootElements(false);
 
             _direction = GetDirection();
-            
-            _flyBall.StartMove(_direction, TargetTransform);
+           
+            _flyBall.StartMove(_direction, TargetTransform, GetDragForce());
             
             BallFinishedAction?.Invoke();
+        }
+
+        private float GetDragForce()
+        {
+            var diff = (_initPosition - TargetTransform.position).sqrMagnitude;
+            return diff / Radius;
         }
 
         private void ToggleShootElements(bool isShow)
