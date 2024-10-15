@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using Views;
 
 namespace Slingshot
 {
@@ -21,9 +22,10 @@ namespace Slingshot
             gameObject.SetActive(isActive);
         }
 
-        public void SetHolder(Transform holderTransform)
+        public void SetHolder(BubbleView bubbleView)
         {
-            _holderTransform = holderTransform;
+            _holderTransform = bubbleView.transform;
+            transform.position = bubbleView.gameObject.transform.position;
         }
 
         private void Awake()

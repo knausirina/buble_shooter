@@ -1,7 +1,8 @@
-﻿using Field;
+﻿using System;
+using Field;
 using UnityEngine;
 
-public class GameProcess
+public class GameProcess : IDisposable
 {
     private readonly NextBubbleSystem _nextBubbleSystem;
     private readonly Game _game;
@@ -18,21 +19,31 @@ public class GameProcess
 
     public void Run()
     {
-        _game.GameContext.SlingShotLines.ToggleActive(false);
-        _game.GameContext.SlingShot.ToggleActive(false);
+        SetNextBall();
+        
+        _game.GameContext.SlingShot.BallFinishedAction += SetNextBall;
+    }
 
-        var worldPosition = _game.GameContext.GetBottomPointOfFiledWorldPosition();
+    private void SetNextBall()
+    {
+        var worldPosition = _game.GameContext.GetRightBottomAngle();
+        worldPosition.x = 0;
         worldPosition.y += _config.ShooterHeight;
+        worldPosition.z = _game.GameContext.Camera.nearClipPlane;
 
         var bubbleView = _nextBubbleSystem.GetNextBubble();
         bubbleView.transform.position = worldPosition;
         bubbleView.transform.localScale = Vector3.one * _ballSize;
 
-        _game.GameContext.SlingShotLines.gameObject.transform.position = worldPosition;
-        _game.GameContext.SlingShotLines.SetHolder(bubbleView.gameObject.transform);
-        _game.GameContext.SlingShot.SetTargetSpriteRenderer(bubbleView.Renderer);
+        _game.GameContext.SlingShot.SetHolder(bubbleView);
         
         _game.GameContext.SlingShotLines.ToggleActive(true);
         _game.GameContext.SlingShot.ToggleActive(true);
+
+    }
+
+    public void Dispose()
+    {
+        _game.GameContext.SlingShot.BallFinishedAction -= SetNextBall;
     }
 }

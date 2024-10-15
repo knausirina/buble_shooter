@@ -7,8 +7,7 @@ using Object = UnityEngine.Object;
 public class Game
 {
     public GameState GameState => _gameState;
-
-    public Action GameStateChanged; 
+    
     private GameState _gameState = GameState.Stop;
     private Vector2Int _fieldSizeInPixels;
     private Vector2Int _fieldTypeInPixel;
@@ -62,8 +61,6 @@ public class Game
 
         _gameProcess ??= new GameProcess(this, _config, _nextBubbleSystem, _fieldBuilder.SizeBall);
         
-        GameStateChanged?.Invoke();
-        
         _gameProcess.Run();
     }
 
@@ -72,8 +69,7 @@ public class Game
         _gameState = GameState.Stop;
         
         _fieldBuilder.Clear();
-        GameStateChanged?.Invoke();
-        
+        _gameProcess.Dispose();
         _poolBalls.Pool.Clear();
     }
 }

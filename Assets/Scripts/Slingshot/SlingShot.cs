@@ -1,15 +1,21 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
+using Views;
 
 namespace Slingshot
 {
     public class SlingShot : MonoBehaviour
     {
+        public Action BallFinishedAction;
+        
         private const float BorderOffsetYMin = -1f;
         private const float Radius = 1f;
+        private const float RandromAngle = 10f;
 
         [SerializeField] private Transform _centerLineTransform;
         [SerializeField] private Transform _leftLineTransform;
         [SerializeField] private Transform _rightLineTransform;
+        [SerializeField] private Transform _resultTransform;
         [SerializeField] private Transform _releasePointTransform;
         [SerializeField] private SlingShotLines _slingShotLines;
 
@@ -20,15 +26,26 @@ namespace Slingshot
         private float _borderYMin;
         private float _borderYMax;
         private bool _isBeginTouch;
-
-        private SpriteRenderer _targetSpriteRenderer;
-        private Game _game;
         
-        private Transform TargetTransform => _targetSpriteRenderer.transform.parent.transform;
+        private Game _game;
+        private FlyBall _flyBall;
+        private BubbleView _bubbleView;
+        
+        private Camera Camera => _game.GameContext.Camera;
+        private SpriteRenderer TargetSpriteRenderer => _bubbleView.Renderer;
+        private Transform TargetTransform => _bubbleView.transform;
+
+        private void Awake()
+        {
+            ToggleShootElements(false);
+        }
 
         public void Construct(Game game)
         {
             _game = game;
+            
+            _flyBall = new FlyBall();
+            _flyBall.Construct(game.GameContext);
         }
 
         public void ToggleActive(bool isActive)
@@ -40,9 +57,10 @@ namespace Slingshot
             }
         }
 
-        public void SetTargetSpriteRenderer(SpriteRenderer spriteRenderer)
+        public void SetHolder(BubbleView bubbleView)
         {
-            _targetSpriteRenderer = spriteRenderer;
+            _bubbleView = bubbleView;
+            _slingShotLines.SetHolder(bubbleView);
 
             _borderYMin = TargetTransform.position.y + BorderOffsetYMin;
             _borderYMax = TargetTransform.position.y;
@@ -61,15 +79,13 @@ namespace Slingshot
             
             var lookDirection = GetDirection();
             var lookAngle = Mathf.Atan2(lookDirection.y, lookDirection.x) * Mathf.Rad2Deg;
+
+            var angle = lookAngle - 90;
+            _centerLineTransform.transform.rotation = Quaternion.Euler(0f, 0f, angle);
             
-            _centerLineTransform.transform.rotation = Quaternion.Euler(0f, 0f, lookAngle - 90);
-            
-            var centerCircle = new Vector3(_initPosition.x, _initPosition.y, _initPosition.z);
-            var d = (centerCircle - TargetTransform.position).sqrMagnitude;
-            
-            
-            _leftLineTransform.transform.rotation = Quaternion.Euler(0f, 0f, lookAngle - 90 - (10 * d));
-            _rightLineTransform.transform.rotation = Quaternion.Euler(0f, 0f, lookAngle - 90 + (10 * d));
+            var distanceFromCenter = (_initPosition - TargetTransform.position).sqrMagnitude;
+            _leftLineTransform.transform.rotation = Quaternion.Euler(0f, 0f, angle - RandromAngle * distanceFromCenter);
+            _rightLineTransform.transform.rotation = Quaternion.Euler(0f, 0f, angle + RandromAngle * distanceFromCenter);
         }
         
         private Vector3 GetDirection()
@@ -121,6 +137,8 @@ namespace Slingshot
             }
 #endif
             DrawLine();
+
+            _flyBall.Update();
         }
 
         private Vector2 GetTouchPosition()
@@ -131,6 +149,8 @@ namespace Slingshot
             return Input.GetTouch(0).position;
 #endif
         }
+
+        private Vector3 _direction;
 
         private void OnBeginTouch()
         {
@@ -144,24 +164,23 @@ namespace Slingshot
             _isBeginTouch = true;
 
             _offset = _initPosition - _touchBegin;
-            _centerLineTransform.gameObject.SetActive(true);
+            
+            ToggleShootElements(true);
         }
 
         private void OnMove()
         {
             var position = GetTouchPosition();
-            var screenPoint = new Vector3(position.x, position.y, _game.GameContext.Camera.nearClipPlane);
-            var currentPosition = _game.GameContext.Camera.ScreenToWorldPoint(screenPoint) + _offset;
+            var screenPoint = new Vector3(position.x, position.y, Camera.nearClipPlane);
+            var currentPosition = Camera.ScreenToWorldPoint(screenPoint) + _offset;
             
-            var centerCircle = new Vector3(_initPosition.x, _initPosition.y, _initPosition.z);
-            var direction = currentPosition - centerCircle;
-
+            var direction = currentPosition - _initPosition;
             var coordinates = new Vector2(currentPosition.x, currentPosition.y);
             
             if (direction.sqrMagnitude > Radius)
             {
                 var directionWithLenghtRadius = direction.normalized * Radius;
-                var pos = centerCircle +  directionWithLenghtRadius;
+                var pos = _initPosition +  directionWithLenghtRadius;
                 TargetTransform.position = new Vector3(pos.x, pos.y, currentPosition.z);
             }
             else
@@ -179,15 +198,28 @@ namespace Slingshot
         
         private void OnEndTouch()
         {
-            _centerLineTransform.gameObject.SetActive(false);
-            TargetTransform.position = _initPosition;
+           ToggleShootElements(false);
+
+            _direction = GetDirection();
+            
+            _flyBall.StartMove(_direction, TargetTransform);
+            
+            BallFinishedAction?.Invoke();
+        }
+
+        private void ToggleShootElements(bool isShow)
+        {
+            _centerLineTransform.gameObject.SetActive(isShow);
+            _leftLineTransform.gameObject.SetActive(isShow);
+            _rightLineTransform.gameObject.SetActive(isShow);
+            _slingShotLines.ToggleActive(isShow);
         }
 
         private bool IsTouchTargetObject(Vector3 position)
         {
-            position.z = _game.GameContext.Camera.nearClipPlane;
-            var mousePosition = _game.GameContext.Camera.ScreenToWorldPoint(position);
-            return _targetSpriteRenderer.bounds.Contains(mousePosition);
+            var mousePosition = Camera.ScreenToWorldPoint(position);
+            mousePosition.z = Camera.nearClipPlane;
+            return TargetSpriteRenderer.bounds.Contains(mousePosition);
         }
     }
 }
