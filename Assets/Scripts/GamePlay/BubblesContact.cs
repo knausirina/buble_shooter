@@ -36,7 +36,6 @@ namespace GamePlay
                 return;
             }
 
-            // Debug.Log("xxx CheckContact!!!");
             var find = false;
             for (var i = _bubblesViews.GetLength(0) - 1; i >= 0; i--)
             {
@@ -49,14 +48,12 @@ namespace GamePlay
                     }
 
                     var d = (_bubblesViews[i, j].transform.position - _targetBubbleView.transform.position).sqrMagnitude;
-                    //Debug.Log("xxx d " + d);
                     if (d < (_ballSize + Offset))
                     {
                         currentBubble.name = "hit";
 
                         if (!isBroke)
                         {
-                            Debug.Log($"xxx i = {i} j = {j}");
                             _fieldBuilder.AddBubble(_targetBubbleView, i + 1, j);
                             find = true;
                             _bubblesViews[i + 1, j] = _targetBubbleView;
@@ -69,8 +66,6 @@ namespace GamePlay
                             _fieldBuilder.AddBubble(_targetBubbleView, i, j);
                             _bubblesViews[i, j] = _targetBubbleView;
                         }
-                        
-                       // throw new Exception();
                     }
                 }
 
