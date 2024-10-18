@@ -54,6 +54,7 @@ namespace Field
                     }
 
                     var bubble = _poolBalls.Pool.Get();
+                    bubble.gameObject.name = $" i={i} j={j}";
                     bubble.Renderer.color = _config.GetColorByEnum(bubbleData.Color);
                     AddBubble(bubble, i, j);
                     
@@ -73,15 +74,20 @@ namespace Field
 
         public void AddBubble(BubbleView bubbleView, int row, int column)
         {
-            var offset = _sizeBall / 10;
-
-            var remainder = row - row / 2 * 2;
-            var pos = new Vector2(column * (_sizeBall + offset) + _sizeBall / 2 +  3 * remainder * offset, -row * (_sizeBall + offset) - _sizeBall / 2);
             bubbleView.gameObject.transform.parent = _gameContext.BubblesViewRoot;
-            bubbleView.transform.localPosition = pos;
+            bubbleView.transform.localPosition = GetPosition(row, column);
             bubbleView.Renderer.gameObject.transform.localScale = new Vector3(_sizeBall, _sizeBall, 1);
+            bubbleView.gameObject.name = $" i={row} j={column}";
 
             _bubbleViews[row, column] = bubbleView;
+        }
+
+        public Vector2 GetPosition(int row, int column)
+        {
+            var offset = _sizeBall / 10;
+            var remainder = row - row / 2 * 2;
+            return new Vector2(column * (_sizeBall + offset) + _sizeBall / 2 +  3 * remainder * offset,
+                -row * (_sizeBall + offset) - _sizeBall / 2 );
         }
     }
 }
