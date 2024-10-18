@@ -1,4 +1,5 @@
 ﻿using System;
+using GamePlay;
 using UnityEngine;
 using Views;
 
@@ -29,7 +30,11 @@ namespace Slingshot
         
         private Game _game;
         private FlyBall _flyBall;
+        private BubblesContact _bubblesContact;
         private BubbleView _bubbleView;
+        private Vector3 _direction;
+        private bool _isAllowControlBall = true;
+        private bool _isWaitMoveBall = true;
         
         private Camera Camera => _game.GameContext.Camera;
         private SpriteRenderer TargetSpriteRenderer => _bubbleView.Renderer;
@@ -40,12 +45,14 @@ namespace Slingshot
             ToggleShootElements(false);
         }
 
-        public void Construct(Game game)
+        public void Construct(Game game, BubblesContact bubblesContact)
         {
             _game = game;
             
-            _flyBall = new FlyBall();
-            _flyBall.Construct(game.GameContext);
+            _flyBall ??= new FlyBall();
+            _flyBall.SetContext(game.GameContext);
+
+            _bubblesContact = bubblesContact;
         }
 
         public void ToggleActive(bool isActive)
@@ -95,29 +102,43 @@ namespace Slingshot
             return (pullDirection- positionBall).normalized;
         }
 
-        private void Update()
+        public void ToggleAllowControlBall(bool isAllowControlBall)
         {
-            if (_game == null || _game.GameState != GameState.Play)
+            _isAllowControlBall = isAllowControlBall;
+        }
+
+        public void DisableShoot()
+        {
+            _flyBall.StopMove();
+            _isWaitMoveBall = false;
+            _bubblesContact.SetTarget(null);
+        }
+
+        public void AllowShoot()
+        {
+            _isWaitMoveBall = true;
+        }
+
+        private void ControlBall()
+        {
+            if (_isWaitMoveBall)
             {
-                return;
-            }
-            
 #if UNITY_EDITOR
-            if (Input.GetMouseButtonDown(0))
-            {
-                OnBeginTouch();
-            }
+                if (Input.GetMouseButtonDown(0))
+                {
+                    OnBeginTouch();
+                }
 
-            if (Input.GetMouseButtonUp(0))
-            {
-                OnEndTouch();
-               _isBeginTouch = false;
-            }
+                if (Input.GetMouseButtonUp(0) && _isBeginTouch)
+                {
+                    OnEndTouch();
+                    _isBeginTouch = false;
+                }
 
-            if (_isBeginTouch)
-            {
-                OnMove();
-            }
+                if (_isBeginTouch)
+                {
+                    OnMove();
+                }
 #else
 
             if (Input.touchCount > 0)
@@ -136,9 +157,24 @@ namespace Slingshot
                 }
             }
 #endif
-            DrawLine();
+                DrawLine();
+            }
+        }
 
-            _flyBall.Update();
+        private void Update()
+        {
+            if (_game == null || _game.GameState != GameState.Play)
+            {
+                return;
+            }
+
+            ControlBall();
+            
+            if (_isWaitMoveBall)
+            {
+                _flyBall.Update();
+                _bubblesContact.CheckContact(false);
+            }
         }
 
         private Vector2 GetTouchPosition()
@@ -149,8 +185,6 @@ namespace Slingshot
             return Input.GetTouch(0).position;
 #endif
         }
-
-        private Vector3 _direction;
 
         private void OnBeginTouch()
         {
@@ -195,16 +229,18 @@ namespace Slingshot
             _leftLineTransform.position = TargetTransform.position;
             _rightLineTransform.position = TargetTransform.position;
         }
-        
+
         private void OnEndTouch()
         {
-           ToggleShootElements(false);
+            _isAllowControlBall = false;
+            
+            ToggleShootElements(false);
 
             _direction = GetDirection();
-           
+
+            _bubblesContact.SetTarget(_bubbleView);
+
             _flyBall.StartMove(_direction, TargetTransform, GetDragForce());
-            
-            BallFinishedAction?.Invoke();
         }
 
         private float GetDragForce()

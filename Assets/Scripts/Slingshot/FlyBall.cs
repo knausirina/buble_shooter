@@ -15,7 +15,7 @@ namespace Slingshot
         private Transform _targetTransform;
         private float _coefficientSpeed;
         
-        public void Construct(GameContext gameContext)
+        public void SetContext(GameContext gameContext)
         {
             _gameContext = gameContext;
         }
@@ -29,9 +29,19 @@ namespace Slingshot
             _startMove = true;
         }
 
+        public void StopMove()
+        {
+            _targetTransform = null;
+        }
+
         public void Update()
         {
             if (!_startMove)
+            {
+                return;
+            }
+
+            if (_targetTransform == null)
             {
                 return;
             }
