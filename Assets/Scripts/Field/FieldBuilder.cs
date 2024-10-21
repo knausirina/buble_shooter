@@ -89,5 +89,15 @@ namespace Field
             return new Vector2(column * (_sizeBall + offset) + _sizeBall / 2 +  3 * remainder * offset,
                 -row * (_sizeBall + offset) - _sizeBall / 2 );
         }
+
+        public bool IsHasPosition(int row, int column)
+        {
+            if (row >= _bubbleViews.GetLength(0))
+            {
+                return false;
+            }
+
+            return column < _bubbleViews.GetLength(1);
+        }
     }
 }

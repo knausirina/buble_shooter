@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 using Data;
 using Field;
 using UnityEngine;
@@ -29,6 +30,8 @@ namespace GamePlay
             _targetBubbleView = bubbleView;
         }
 
+        private int hitNum = 0;
+        
         public void CheckContact(bool isBroke)
         {
             if (_targetBubbleView == null)
@@ -47,36 +50,65 @@ namespace GamePlay
                         continue;
                     }
 
-                    var pos1 = currentBubble.transform.position;
-                    var pos2 = _targetBubbleView.transform.position;
-
                     var v1 = (Vector2)currentBubble.transform.position;
-                    var v2 = (Vector2)_targetBubbleView.transform.position;
+                    var targetPositionVector2 = (Vector2)_targetBubbleView.transform.position;
                     
-                    var d = (v1 - v2).magnitude;
-                    var dd = Vector2.Distance(v1, v2);
-                    Debug.Log($"xxx v1 = {v1} v2 = {v2} pos1 = {pos1} pos2 = {pos2} dd = {dd} d = {d}");
-                    Debug.Log("xxx d " + d + " i= " + i  + " j =  " + j + " _ballSize= " + _ballSize + " _ballSize * 2 = " + _ballSize * 2) ;
-                    if (d < (_ballSize))
+                    var d = Vector2.Distance(v1, targetPositionVector2);
+                    if (d < _ballSize)
                     {
-                        currentBubble.name = "hit";
+                        currentBubble.name = "hit" + hitNum++;
 
                         if (!isBroke)
                         {
                             var row = i + 1;
-                            
-                            var d1 = (_fieldBuilder.GetPosition(row, j) - (Vector2)_targetBubbleView.transform.position).magnitude;
-                            var d2 = (_fieldBuilder.GetPosition(row, j + 1) - (Vector2)_targetBubbleView.transform.position).magnitude;
-                           
+                            var currentColumnt = j;
 
-                            var column = (d1 < d2 ? j : j + 1);
+                            if (i % 2 == 0)
+                            {
+                                currentColumnt++;
+                            }
+                            else
+                            {
+                                currentColumnt++;
+                            }
 
-                            Debug.Log("xxx d1 =  " + d1 + " d2 = " + d2 + " row "+ row + " column=" + column);
+                            var d1 = float.MaxValue;
+                            if (_fieldBuilder.IsHasPosition(row, currentColumnt) && _bubblesViews[row, currentColumnt] == null)
+                            {
+                                d1 = (_fieldBuilder.GetPosition(row, currentColumnt) - targetPositionVector2).magnitude;
+                            }
+
+                            var d2 = float.MaxValue;
+                            if (_fieldBuilder.IsHasPosition(row, currentColumnt + 1) && _bubblesViews[row, currentColumnt + 1] == null)
+                            {
+                                d2 = (_fieldBuilder.GetPosition(row, currentColumnt + 1) - targetPositionVector2).magnitude;
+                            }
+
+                            var d3 = float.MaxValue;
+                            if (_fieldBuilder.IsHasPosition(row, currentColumnt - 1) && _bubblesViews[row, currentColumnt - 1] == null)
+                            {
+                                d3 = (_fieldBuilder.GetPosition(row, currentColumnt - 1) - targetPositionVector2).magnitude;
+                            }
+
+                            var targetColumn = currentColumnt;
+                            var minD = d1;
+                            if (d2 < d1)
+                            {
+                                targetColumn = currentColumnt + 1;
+                                minD = d2;
+                            }
+
+                            if (d3 < minD)
+                            {
+                                targetColumn = currentColumnt - 1;
+                            }
+
+                            Debug.Log($"xxx d1 = {d1}  d2 = {d2} d3={d3} row ={row} column={targetColumn}");
                           //  throw new UnityException();
-                            _fieldBuilder.AddBubble(_targetBubbleView, row, column);
+                            _fieldBuilder.AddBubble(_targetBubbleView, row, targetColumn);
                             find = true;
-                            _bubblesViews[row, column] = _targetBubbleView;
-                            BubbleShoot?.Invoke(currentBubble, new BubblePosition(row, column));
+                            _bubblesViews[row, targetColumn] = _targetBubbleView;
+                            BubbleShoot?.Invoke(currentBubble, new BubblePosition(row, targetColumn));
                             break;
                         }
                         else

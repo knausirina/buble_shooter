@@ -55,16 +55,18 @@ namespace Slingshot
             var n2 = angleLeft - angleRight;
             
             _direction.z = 0;
-            if (distance1 <= 0.01f || distance2 <= 0.01f)
+            var diff = 0.02f;
+            Debug.Log($"Fly distance1={distance1} distance1 <= 0.02f ={distance1 <= 0.02f} distance2={distance2} distance2 <= 0.02f = {distance2 <= 0.02f}");
+            if (distance1 <= diff || distance2 <= diff)
             {
-                if (distance1 <= 0.01f)
+                if (distance1 <= diff)
                 {
                     n2 = n2.normalized;
                     _direction = Vector3.Reflect(_targetTransform.position, -n2);
                     Debug.Log("xxx1");
                 }
 
-                if (distance2 <= 0.01f)
+                if (distance2 <= diff)
                 {
                     n2 = n2.normalized;
                     _direction = Vector3.Reflect(_targetTransform.position, n2);
