@@ -11,6 +11,7 @@ public class Config : ScriptableObject
     [SerializeField] private ColorConfigData[] _colorData;
     [SerializeField] private TextAsset _fieldTextAsset;
     [SerializeField] private float _shooterHeight;
+    [SerializeField] private int _conditionWinInLastRowPercent;
     
     private Dictionary<ColorEnum, Color> _colorsByEnum;
     private Dictionary<Char, ColorEnum> _colorEnumsByChar;
@@ -19,7 +20,9 @@ public class Config : ScriptableObject
     public IReadOnlyList<ColorConfigData> BubbleData => _colorData;
     public TextAsset FieldTextAsset => _fieldTextAsset;
     public float ShooterHeight => _shooterHeight;
-    
+    public int ConditionWinInLastRowPercent => _conditionWinInLastRowPercent;
+
+
     public Color GetColorByEnum(ColorEnum colorEnum)
     {
         if (_colorsByEnum == null)

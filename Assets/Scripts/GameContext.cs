@@ -1,14 +1,17 @@
-﻿using Slingshot;
+﻿using Field;
+using Slingshot;
 using UnityEngine;
+using Views.UI;
 
 public class GameContext : MonoBehaviour
 {
     [SerializeField] private Transform _bubblesViewRoot;
     [SerializeField] private RectTransform _fieldRectTransform;
-    [SerializeField] private SlingShot _slingShot;
-    [SerializeField] private SlingShotLines _slingShotLines;
     [SerializeField] private Camera _camera;
     [SerializeField] private Canvas _canvas;
+    [SerializeField] private SlingShot _slingShot;
+    [SerializeField] private SlingShotLines _slingShotLines;
+    [SerializeField] private NextBubbleView _nextBubbleView;
 
     private float _canvasHeight;
     private Vector3[] _fieldCorners;
@@ -18,6 +21,7 @@ public class GameContext : MonoBehaviour
     public Camera Camera => _camera;
     public SlingShot SlingShot => _slingShot;
     public SlingShotLines SlingShotLines => _slingShotLines;
+    public NextBubbleView NextBubbleView => _nextBubbleView;
 
     public Vector3 GetRightBottomAngle()
     {

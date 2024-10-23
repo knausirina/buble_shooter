@@ -7,9 +7,6 @@ namespace Field
 {
     public class PoolBalls
     {
-        private List<BubbleView> _busyBubbles;
-        private List<BubbleView> _freeBubbles;
-        
         private IObjectPool<BubbleView> _pool;
 
         private readonly GameObject _prefab;

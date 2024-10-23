@@ -10,8 +10,6 @@ public class Game
     public GameState GameState => _gameState;
     
     private GameState _gameState = GameState.Stop;
-    private Vector2Int _fieldSizeInPixels;
-    private Vector2Int _fieldTypeInPixel;
 
     private readonly Config _config;
     
@@ -19,17 +17,16 @@ public class Game
     private FieldDataFromFile _fieldDataFromFile;
     private BuilderBubbleDataByString _builderBubbleDataByString;
     private FieldBuilder _fieldBuilder;
-    private BubblesContact _bubblesContact;
-    private FieldDecoration _fieldDecoration;
+    private BubblesContactSystem _bubblesContactSystem;
     private GameContext _gameContext;
     private NextBubbleSystem _nextBubbleSystem;
+    private ResultGameSystem _resultGameSystem;
     private PoolBalls _poolBalls;
+    private GameParameters _gameParameters;
 
-    private BubbleView[,] _bubbleViews;
+    private int _generatedBubblesCount = 0;
 
     public GameContext GameContext => _gameContext;
-    public Vector2Int FieldSizeInPixels => _fieldSizeInPixels;
-    public Vector2Int FieldTypeInPixel => _fieldTypeInPixel;
     
     public Game(Config config)
     {
@@ -45,26 +42,36 @@ public class Game
         _gameState = GameState.Play;
 
         _fieldDataFromFile ??= new FieldDataFromFile(_config);
-        
-        _bubblesData = (_builderBubbleDataByString ?? new BuilderBubbleDataByString(_config)).GetData(_fieldDataFromFile.GetData(), out _fieldSizeInPixels, out _fieldTypeInPixel);
+
+        Vector2Int fieldSizeInPixels;
+        Vector2Int fieldSizeInElements;
+        int maxCountBubbles;
+
+        _bubblesData = (_builderBubbleDataByString ?? new BuilderBubbleDataByString(_config))
+            .GetData(_fieldDataFromFile.GetData(), out fieldSizeInPixels, out fieldSizeInElements, out maxCountBubbles);
 
         _gameContext = Object.FindObjectOfType<GameContext>();
         
-        _fieldDecoration ??= new FieldDecoration();
-        _fieldDecoration.Build(this);
+        _gameContext.FieldRectTransform.sizeDelta = new Vector2(fieldSizeInPixels.x, fieldSizeInPixels.y);
 
         _poolBalls ??= new PoolBalls(_config.BubbleView.gameObject);
         
         _fieldBuilder ??= new FieldBuilder(_config, _poolBalls);
-        _bubbleViews = _fieldBuilder.Build(_gameContext, _bubblesData, _fieldTypeInPixel);
+        _fieldBuilder.Build(_gameContext, _bubblesData, fieldSizeInElements);
 
-        _bubblesContact = new BubblesContact();
-        _bubblesContact.SetData(_fieldBuilder, _bubbleViews, _fieldBuilder.SizeBall);
-        _bubblesContact.BubbleShoot += OnBubbleShoot;
+        Debug.Log("xxx _fieldBuilder.BallSize " + _fieldBuilder.BallSize);
+        _gameParameters = new GameParameters(_fieldBuilder.BallSize, fieldSizeInPixels, fieldSizeInElements, maxCountBubbles);
+
+        _resultGameSystem ??= new ResultGameSystem(_config);
+
+        _bubblesContactSystem = new BubblesContactSystem();
+        _bubblesContactSystem.SetData(_fieldBuilder);
+        _bubblesContactSystem.BubbleShoot += OnBubbleShoot;
         
         _nextBubbleSystem ??= new NextBubbleSystem(_config, _poolBalls);
-        
-        _gameContext.SlingShot.Construct(this, _bubblesContact);
+        _nextBubbleSystem.SetData(_gameContext, _gameParameters);
+
+        _gameContext.SlingShot.Construct(this, _bubblesContactSystem);
         
         SetNextBall();
         
@@ -73,47 +80,47 @@ public class Game
     
     private void SetNextBall()
     {
+        if (_generatedBubblesCount >= _gameParameters.MaxCountBubbles)
+        {
+            var isWin = _resultGameSystem.IsWin(_fieldBuilder.BubblesViews, _gameParameters.FieldSizeInElements);
+            return;
+        }
+
         Debug.Log("SetNextBall");
-        var worldPosition = GameContext.GetRightBottomAngle();
-        worldPosition.x = 0;
-        worldPosition.y += _config.ShooterHeight;
-        worldPosition.z = GameContext.Camera.nearClipPlane;
+        _generatedBubblesCount++;
+
+        _nextBubbleSystem.GenerateNextColorOfBubble();
 
         var bubbleView = _nextBubbleSystem.GetNextBubble();
-        bubbleView.transform.position = worldPosition;
-        bubbleView.Renderer.gameObject.transform.localScale = Vector3.one * _fieldBuilder.SizeBall;
+
+        _nextBubbleSystem.GenerateNextColorOfBubble();
+
+        GameContext.NextBubbleView.SetCount(_gameParameters.MaxCountBubbles - _generatedBubblesCount);
+        GameContext.NextBubbleView.SetColor(_nextBubbleSystem.GetNextColorOfBubble());
 
         GameContext.SlingShot.SetHolder(bubbleView);
-        
-        GameContext.SlingShotLines.ToggleActive(true);
-        GameContext.SlingShot.ToggleActive(true);
-        
-        GameContext.SlingShot.AllowShoot();
     }
 
     public void Stop()
     {
         _gameState = GameState.Stop;
         
-        _bubblesContact.BubbleShoot -= OnBubbleShoot;
+        _bubblesContactSystem.BubbleShoot -= OnBubbleShoot;
 
-        foreach (var bubble in _bubbleViews)
+        foreach (var bubble in _fieldBuilder.BubblesViews)
         {
             _poolBalls.Pool.Release(bubble);
         }
 
-        _bubbleViews = null;
+        _fieldBuilder.Clear();
 
         _poolBalls.Pool.Clear();
     }
 
-    private void OnBubbleShoot(BubbleView bubbleView, BubblePosition bubblePosition)
+    private void OnBubbleShoot(BubbleView bubbleView)
     {
-        Debug.Log("xxx OnBubbleShoot column= " + bubblePosition.Column + " row = " + bubblePosition.Column);
         _gameContext.SlingShot.DisableShoot();
 
         SetNextBall();
-        
-        _gameContext.SlingShot.ToggleAllowControlBall(true);
     }
 }

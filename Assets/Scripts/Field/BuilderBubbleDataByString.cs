@@ -10,6 +10,7 @@ namespace Field
         private const char EmptySymbol = '0';
         private const int NumRowWithCountsBubbles = 0;
         private const int NumRowWithSizeField = 1;
+        private const int NumRowWithMaxCountBubbles = 2;
 
         private readonly Config _config;
 
@@ -18,21 +19,22 @@ namespace Field
             _config = config;
         }
 
-        public BubblesData GetData(string text, out Vector2Int fieldSizeInPixel, out Vector2Int fieldSizeInElements)
+        public BubblesData GetData(string text, out Vector2Int fieldSizeInPixel, out Vector2Int fieldSizeInElements, out int maxCountBubbles)
         {
             fieldSizeInPixel = Vector2Int.zero;
             fieldSizeInElements = Vector2Int.zero;
-            
+            maxCountBubbles  = 0;
+
             using (var strReader = new StringReader(text))
             {
-                string line;
-                var i = 0;
+                var numRow = 0;
                 var result = new List<List<BubbleData>>();
+                string line;
                 while ((line = strReader.ReadLine()) != null) 
                 { 
-                    Debug.Log($" line = {line}");
+                    Debug.Log($" line = {line} numRow = {numRow}");
 
-                    switch (i)
+                    switch (numRow)
                     {
                         case NumRowWithCountsBubbles:
                         {
@@ -50,6 +52,9 @@ namespace Field
                             fieldSizeInElements = new Vector2Int(rows, columns);
                             break;
                         }
+                        case NumRowWithMaxCountBubbles:
+                            maxCountBubbles = int.Parse(line);
+                            break;
                         default:
                         {
                             var dataInRow = new List<BubbleData>();
@@ -59,7 +64,7 @@ namespace Field
                                 if (symbol != EmptySymbol)
                                 {
                                     var colorEnum = _config.GetColorByChar(symbol);
-                                    dataInRow.Add(new BubbleData(colorEnum, new Vector2Int(i, j)));
+                                    dataInRow.Add(new BubbleData(colorEnum, new Vector2Int(numRow, j)));
                                 }
                                 else
                                 {
@@ -72,7 +77,7 @@ namespace Field
                         }
                     }
 
-                    i++;
+                    numRow++;
                 }
                 return new BubblesData(result);
             }

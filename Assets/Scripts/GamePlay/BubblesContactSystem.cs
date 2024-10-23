@@ -1,28 +1,22 @@
 ﻿using System;
-using System.ComponentModel;
-using Data;
 using Field;
 using UnityEngine;
 using Views;
 
 namespace GamePlay
 {
-    public class BubblesContact
+    public class BubblesContactSystem
     {
-        public Action<BubbleView, BubblePosition> BubbleShoot;
+        public Action<BubbleView> BubbleShoot;
         
-        private BubbleView[,] _bubblesViews;
         private BubbleView _targetBubbleView;
         private FieldBuilder _fieldBuilder;
-        private float _ballSize;
 
         private const float Offset = 0.1f;
         
-        public void SetData(FieldBuilder fieldBuilder, BubbleView[,] bubblesViews, float ballSize)
+        public void SetData(FieldBuilder fieldBuilder)
         {
             _fieldBuilder = fieldBuilder;
-            _bubblesViews = bubblesViews;
-            _ballSize = ballSize;
         }
 
         public void SetTarget(BubbleView bubbleView)
@@ -40,11 +34,11 @@ namespace GamePlay
             }
 
             var find = false;
-            for (var i = _bubblesViews.GetLength(0) - 1; i >= 0; i--)
+            for (var i = _fieldBuilder.BubblesViews.GetLength(0) - 1; i >= 0; i--)
             {
-                for (var j = 0; j < _bubblesViews.GetLength(1); j++)
+                for (var j = 0; j < _fieldBuilder.BubblesViews.GetLength(1); j++)
                 {
-                    var currentBubble = _bubblesViews[i, j];
+                    var currentBubble = _fieldBuilder.BubblesViews[i, j];
                     if (currentBubble == null)
                     {
                         continue;
@@ -54,7 +48,7 @@ namespace GamePlay
                     var targetPositionVector2 = (Vector2)_targetBubbleView.transform.position;
                     
                     var d = Vector2.Distance(v1, targetPositionVector2);
-                    if (d < _ballSize)
+                    if (d < _fieldBuilder.BallSize)
                     {
                         currentBubble.name = "hit" + hitNum++;
 
@@ -73,19 +67,19 @@ namespace GamePlay
                             }
 
                             var d1 = float.MaxValue;
-                            if (_fieldBuilder.IsHasPosition(row, currentColumnt) && _bubblesViews[row, currentColumnt] == null)
+                            if (_fieldBuilder.IsHasPosition(row, currentColumnt) && _fieldBuilder.BubblesViews[row, currentColumnt] == null)
                             {
                                 d1 = (_fieldBuilder.GetPosition(row, currentColumnt) - targetPositionVector2).magnitude;
                             }
 
                             var d2 = float.MaxValue;
-                            if (_fieldBuilder.IsHasPosition(row, currentColumnt + 1) && _bubblesViews[row, currentColumnt + 1] == null)
+                            if (_fieldBuilder.IsHasPosition(row, currentColumnt + 1) && _fieldBuilder.BubblesViews[row, currentColumnt + 1] == null)
                             {
                                 d2 = (_fieldBuilder.GetPosition(row, currentColumnt + 1) - targetPositionVector2).magnitude;
                             }
 
                             var d3 = float.MaxValue;
-                            if (_fieldBuilder.IsHasPosition(row, currentColumnt - 1) && _bubblesViews[row, currentColumnt - 1] == null)
+                            if (_fieldBuilder.IsHasPosition(row, currentColumnt - 1) && _fieldBuilder.BubblesViews[row, currentColumnt - 1] == null)
                             {
                                 d3 = (_fieldBuilder.GetPosition(row, currentColumnt - 1) - targetPositionVector2).magnitude;
                             }
@@ -104,18 +98,17 @@ namespace GamePlay
                             }
 
                             Debug.Log($"xxx d1 = {d1}  d2 = {d2} d3={d3} row ={row} column={targetColumn}");
-                          //  throw new UnityException();
                             _fieldBuilder.AddBubble(_targetBubbleView, row, targetColumn);
                             find = true;
-                            _bubblesViews[row, targetColumn] = _targetBubbleView;
-                            BubbleShoot?.Invoke(currentBubble, new BubblePosition(row, targetColumn));
+                            _fieldBuilder.BubblesViews[row, targetColumn] = _targetBubbleView;
+                            BubbleShoot?.Invoke(currentBubble);
                             break;
                         }
                         else
                         {
                             _fieldBuilder.RemoveBubble(currentBubble, i, j);
                             _fieldBuilder.AddBubble(_targetBubbleView, i, j);
-                            _bubblesViews[i, j] = _targetBubbleView;
+                            _fieldBuilder.BubblesViews[i, j] = _targetBubbleView;
                         }
                     }
                 }

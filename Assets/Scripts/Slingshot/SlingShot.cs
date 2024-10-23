@@ -30,10 +30,9 @@ namespace Slingshot
         
         private Game _game;
         private FlyBall _flyBall;
-        private BubblesContact _bubblesContact;
+        private BubblesContactSystem _bubblesContactSystem;
         private BubbleView _bubbleView;
         private Vector3 _direction;
-        private bool _isAllowControlBall = true;
         private bool _isWaitMoveBall = true;
         
         private Camera Camera => _game.GameContext.Camera;
@@ -45,38 +44,38 @@ namespace Slingshot
             ToggleShootElements(false);
         }
 
-        public void Construct(Game game, BubblesContact bubblesContact)
+        public void Construct(Game game, BubblesContactSystem bubblesContactSystem)
         {
             _game = game;
             
             _flyBall ??= new FlyBall();
             _flyBall.SetContext(game.GameContext);
 
-            _bubblesContact = bubblesContact;
-        }
+            _bubblesContactSystem = bubblesContactSystem;
 
-        public void ToggleActive(bool isActive)
-        {
-            gameObject.SetActive(isActive);
-            if (isActive)
-            {
-                _initPosition = TargetTransform.position;
-            }
+            gameObject.SetActive(false);
         }
 
         public void SetHolder(BubbleView bubbleView)
         {
             _bubbleView = bubbleView;
-            _slingShotLines.SetHolder(bubbleView);
 
             _borderYMin = TargetTransform.position.y + BorderOffsetYMin;
             _borderYMax = TargetTransform.position.y;
-            
-            _game.GameContext.SlingShotLines.UpdatePositions();
 
             _centerLineTransform.transform.position = TargetTransform.position;
+
+            _initPosition = TargetTransform.position;
+
+            _slingShotLines.SetHolder(bubbleView);
+            _slingShotLines.UpdatePositions();
+            _slingShotLines.ToggleActive(true);
+
+            gameObject.SetActive(true);
+
+            _isWaitMoveBall = true;
         }
-        
+
         private void DrawLine()
         {
             if (!_isBeginTouch)
@@ -102,21 +101,12 @@ namespace Slingshot
             return (pullDirection- positionBall).normalized;
         }
 
-        public void ToggleAllowControlBall(bool isAllowControlBall)
-        {
-            _isAllowControlBall = isAllowControlBall;
-        }
 
         public void DisableShoot()
         {
             _flyBall.StopMove();
             _isWaitMoveBall = false;
-            _bubblesContact.SetTarget(null);
-        }
-
-        public void AllowShoot()
-        {
-            _isWaitMoveBall = true;
+            _bubblesContactSystem.SetTarget(null);
         }
 
         private void ControlBall()
@@ -173,7 +163,7 @@ namespace Slingshot
             if (_isWaitMoveBall)
             {
                 _flyBall.Update();
-                _bubblesContact.CheckContact(false);
+                _bubblesContactSystem.CheckContact(false);
             }
         }
 
@@ -231,14 +221,12 @@ namespace Slingshot
         }
 
         private void OnEndTouch()
-        {
-            _isAllowControlBall = false;
-            
+        {            
             ToggleShootElements(false);
 
             _direction = GetDirection();
 
-            _bubblesContact.SetTarget(_bubbleView);
+            _bubblesContactSystem.SetTarget(_bubbleView);
 
             _flyBall.StartMove(_direction, TargetTransform, GetDragForce());
         }
