@@ -48,35 +48,33 @@ namespace Slingshot
 
             var distance1 = Math.Abs(_targetTransform.position.x - _gameContext.GetRightBottomAngle().x);
             var distance2 = Math.Abs(_targetTransform.position.x - _gameContext.GetLeftBottomAngle().x);
-            
+
             var angleRight = _gameContext.GetRightBottomAngle();
             var angleLeft = _gameContext.GetLeftBottomAngle();
             var n1 = angleRight - angleLeft;
             var n2 = angleLeft - angleRight;
-            
+
             _direction.z = 0;
             var diff = 0.02f;
-            Debug.Log($"Fly distance1={distance1} distance1 <= 0.02f ={distance1 <= 0.02f} distance2={distance2} distance2 <= 0.02f = {distance2 <= 0.02f}");
-            if (distance1 <= diff || distance2 <= diff)
+           // Debug.Log(
+            //    $"Fly distance1={distance1} distance1 <= 0.02f ={distance1 <= 0.02f} distance2={distance2} distance2 <= 0.02f = {distance2 <= 0.02f}");
+            if (distance1 <= diff)
             {
-                if (distance1 <= diff)
-                {
-                    n2 = n2.normalized;
-                    _direction = Vector3.Reflect(_targetTransform.position, -n2);
-                    Debug.Log("xxx1");
-                }
+                n2 = n2.normalized;
+                _direction = Vector3.Reflect(_targetTransform.position, -n2);
+                //Debug.Log("xxx1");
+            }
 
-                if (distance2 <= diff)
-                {
-                    n2 = n2.normalized;
-                    _direction = Vector3.Reflect(_targetTransform.position, n2);
-                    Debug.Log("xxx2");
-                }
+            if (distance2 <= diff)
+            {
+                n2 = n2.normalized;
+                _direction = Vector3.Reflect(_targetTransform.position, n2);
+                //Debug.Log("xxx2");
             }
 
             _targetTransform.position = Vector3.MoveTowards(_targetTransform.position,
-                _beginPos +  _direction.normalized * 1000 , _coefficientSpeed * Speed * Time.deltaTime);
-            
+                _beginPos + _direction.normalized * 1000, _coefficientSpeed * Speed * Time.deltaTime);
+
         }
     }
 }

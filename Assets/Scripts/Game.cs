@@ -59,7 +59,6 @@ public class Game
         _fieldBuilder ??= new FieldBuilder(_config, _poolBalls);
         _fieldBuilder.Build(_gameContext, _bubblesData, fieldSizeInElements);
 
-        Debug.Log("xxx _fieldBuilder.BallSize " + _fieldBuilder.BallSize);
         _gameParameters = new GameParameters(_fieldBuilder.BallSize, fieldSizeInPixels, fieldSizeInElements, maxCountBubbles);
 
         _resultGameSystem ??= new ResultGameSystem(_config);

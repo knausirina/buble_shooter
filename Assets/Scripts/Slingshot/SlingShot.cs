@@ -1,7 +1,11 @@
 ﻿using System;
+using System.Numerics;
 using GamePlay;
 using UnityEngine;
 using Views;
+using Quaternion = UnityEngine.Quaternion;
+using Vector2 = UnityEngine.Vector2;
+using Vector3 = UnityEngine.Vector3;
 
 namespace Slingshot
 {
@@ -11,7 +15,7 @@ namespace Slingshot
         
         private const float BorderOffsetYMin = -1f;
         private const float Radius = 1f;
-        private const float RandromAngle = 10f;
+        private const float RandomAngle = 10f;
 
         [SerializeField] private Transform _centerLineTransform;
         [SerializeField] private Transform _leftLineTransform;
@@ -75,32 +79,6 @@ namespace Slingshot
 
             _isWaitMoveBall = true;
         }
-
-        private void DrawLine()
-        {
-            if (!_isBeginTouch)
-            {
-                return;
-            }
-            
-            var lookDirection = GetDirection();
-            var lookAngle = Mathf.Atan2(lookDirection.y, lookDirection.x) * Mathf.Rad2Deg;
-
-            var angle = lookAngle - 90;
-            _centerLineTransform.transform.rotation = Quaternion.Euler(0f, 0f, angle);
-            
-            var distanceFromCenter = (_initPosition - TargetTransform.position).sqrMagnitude;
-            _leftLineTransform.transform.rotation = Quaternion.Euler(0f, 0f, angle - RandromAngle * distanceFromCenter);
-            _rightLineTransform.transform.rotation = Quaternion.Euler(0f, 0f, angle + RandromAngle * distanceFromCenter);
-        }
-        
-        private Vector3 GetDirection()
-        {
-            var positionBall = _slingShotLines.gameObject.transform.position;
-            var pullDirection = _releasePointTransform.position - (TargetTransform.position - positionBall).normalized;
-            return (pullDirection- positionBall).normalized;
-        }
-
 
         public void DisableShoot()
         {
@@ -220,15 +198,47 @@ namespace Slingshot
             _rightLineTransform.position = TargetTransform.position;
         }
 
-        private void OnEndTouch()
-        {            
-            ToggleShootElements(false);
+        private Vector3 GetDirection()
+        {
+            var positionSlightShotLines = _slingShotLines.gameObject.transform.position;
+            positionSlightShotLines.z = 0;
+            var pullDirection = _releasePointTransform.position - (TargetTransform.position - positionSlightShotLines).normalized;
+            return (pullDirection- positionSlightShotLines).normalized;
+        }
 
-            _direction = GetDirection();
+        private void DrawLine()
+        {
+            if (!_isBeginTouch)
+            {
+                return;
+            }
+
+            var lookDirection = GetDirection();
+            var lookAngle = Mathf.Atan2(lookDirection.y, lookDirection.x) * Mathf.Rad2Deg;
+
+            lookAngle -= 90;
+            _centerLineTransform.transform.rotation = Quaternion.Euler(0f, 0f, lookAngle);
+
+            var distanceFromCenter = GetDragForce();
+            _leftLineTransform.transform.rotation = Quaternion.Euler(0f, 0f, lookAngle - RandomAngle * distanceFromCenter);
+            _rightLineTransform.transform.rotation = Quaternion.Euler(0f, 0f, lookAngle + RandomAngle * distanceFromCenter);
+        }
+
+        private void OnEndTouch()
+        {
+            ToggleShootElements(false);
 
             _bubblesContactSystem.SetTarget(_bubbleView);
 
-            _flyBall.StartMove(_direction, TargetTransform, GetDragForce());
+            _direction = GetDirection();
+
+            var distanceFromCenter = GetDragForce();
+            var angleMin = -RandomAngle * distanceFromCenter;
+            var angleMax = +RandomAngle * distanceFromCenter;
+            var randomAngle = Utils.RandomFloatBetween(angleMin, angleMax);
+            var dir = Quaternion.Euler(0, 0, randomAngle) * _direction;
+
+            _flyBall.StartMove(dir, TargetTransform, GetDragForce());
         }
 
         private float GetDragForce()
@@ -242,6 +252,7 @@ namespace Slingshot
             _centerLineTransform.gameObject.SetActive(isShow);
             _leftLineTransform.gameObject.SetActive(isShow);
             _rightLineTransform.gameObject.SetActive(isShow);
+
             _slingShotLines.ToggleActive(isShow);
         }
 
