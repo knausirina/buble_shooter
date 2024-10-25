@@ -1,13 +1,12 @@
 ﻿using Data;
 using Field;
 using GamePlay;
+using Unity.VisualScripting.Dependencies.Sqlite;
 using UnityEngine;
 using Views;
 using Object = UnityEngine.Object;
-
 public class Game
-{
-    public GameState GameState => _gameState;
+{ public GameState GameState => _gameState;
     
     private GameState _gameState = GameState.Stop;
 
@@ -23,6 +22,8 @@ public class Game
     private ResultGameSystem _resultGameSystem;
     private PoolBalls _poolBalls;
     private GameParameters _gameParameters;
+
+    private ResultGameView _resultGameView;
 
     private int _generatedBubblesCount = 0;
 
@@ -47,8 +48,8 @@ public class Game
         Vector2Int fieldSizeInElements;
         int maxCountBubbles;
 
-        _bubblesData = (_builderBubbleDataByString ?? new BuilderBubbleDataByString(_config))
-            .GetData(_fieldDataFromFile.GetData(), out fieldSizeInPixels, out fieldSizeInElements, out maxCountBubbles);
+        _builderBubbleDataByString ??= new BuilderBubbleDataByString(_config);
+        _bubblesData = _builderBubbleDataByString.GetData(_fieldDataFromFile.GetData(), out fieldSizeInPixels, out fieldSizeInElements, out maxCountBubbles);
 
         _gameContext = Object.FindObjectOfType<GameContext>();
         
@@ -82,6 +83,8 @@ public class Game
         if (_generatedBubblesCount >= _gameParameters.MaxCountBubbles)
         {
             var isWin = _resultGameSystem.IsWin(_fieldBuilder.BubblesViews, _gameParameters.FieldSizeInElements);
+            ShowResultGame(isWin);
+            Stop();
             return;
         }
 
@@ -102,14 +105,10 @@ public class Game
 
     public void Stop()
     {
+        Debug.Log("xxxx Stop");
         _gameState = GameState.Stop;
         
         _bubblesContactSystem.BubbleShoot -= OnBubbleShoot;
-
-        foreach (var bubble in _fieldBuilder.BubblesViews)
-        {
-            _poolBalls.Pool.Release(bubble);
-        }
 
         _fieldBuilder.Clear();
 
@@ -121,5 +120,19 @@ public class Game
         _gameContext.SlingShot.DisableShoot();
 
         SetNextBall();
+    }
+
+    private void ShowResultGame(bool isWin)
+    {
+        if (_resultGameView == null)
+        {
+            var resultGameViewGameObject =
+                Object.Instantiate(GameContext.ResultGameViewPrefab, GameContext.PopupRootTransform);
+
+            _resultGameView = resultGameViewGameObject.GetComponent<ResultGameView>();
+        }
+
+        _resultGameView.gameObject.SetActive(true);
+        _resultGameView.SetValue(isWin);
     }
 }
