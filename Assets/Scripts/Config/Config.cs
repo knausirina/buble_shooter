@@ -17,7 +17,7 @@ public class Config : ScriptableObject
     private Dictionary<Char, ColorEnum> _colorEnumsByChar;
     
     public BubbleView BubbleView => _bubbleView;
-    public IReadOnlyList<ColorConfigData> BubbleData => _colorData;
+    public IReadOnlyList<ColorConfigData> ColorBubbleData => _colorData;
     public TextAsset FieldTextAsset => _fieldTextAsset;
     public float ShooterHeight => _shooterHeight;
     public int ConditionWinInLastRowPercent => _conditionWinInLastRowPercent;

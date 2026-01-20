@@ -1,31 +1,25 @@
 using UnityEngine;
 
-namespace Views.UI
+public class LoaderView : MonoBehaviour
 {
-    public class LoaderView : MonoBehaviour
+    public static LoaderView Instance { get; private set; }
+
+    private void Awake()
     {
-        private static LoaderView _loaderView;
-
-        public static LoaderView Instance => _loaderView;
-
-        private void Awake()
+        if (Instance == null)
         {
+            Instance = this;
             ToggleShow(false);
-
-            if (_loaderView == null)
-            {
-                _loaderView = this;
-                DontDestroyOnLoad(gameObject);
-            }
-            else
-            {
-                Destroy(gameObject);
-            }
+            DontDestroyOnLoad(gameObject);
         }
-
-        public void ToggleShow(bool isVisible)
+        else
         {
-            gameObject.SetActive(isVisible);
+            Destroy(gameObject);
         }
+    }
+
+    public static void ToggleShow(bool isVisible)
+    {
+        Instance.gameObject.SetActive(isVisible);
     }
 }

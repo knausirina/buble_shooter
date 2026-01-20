@@ -1,7 +1,5 @@
-﻿using Field;
-using Slingshot;
+﻿using Slingshot;
 using UnityEngine;
-using Views.UI;
 
 public class GameContext : MonoBehaviour
 {

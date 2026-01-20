@@ -8,7 +8,7 @@
 
      private void Awake()
      {
-         var obj = FindObjectsOfType<GameLauncher>();
+         var obj = FindObjectsByType<GameLauncher>(FindObjectsSortMode.None);
          if (obj.Length > 1)
          {
              Destroy(gameObject);

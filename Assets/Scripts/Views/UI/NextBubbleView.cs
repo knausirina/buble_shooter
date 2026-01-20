@@ -2,21 +2,18 @@
 using TMPro;
 using UnityEngine.UI;
 
-namespace Views.UI
+public class NextBubbleView : MonoBehaviour
 {
-    public class NextBubbleView : MonoBehaviour
+    [SerializeField] private TMP_Text _countField;
+    [SerializeField] private Image _image;
+
+    public void SetCount(int count)
     {
-        [SerializeField] TMP_Text _countField;
-        [SerializeField] private Image _image;
+        _countField.text = count.ToString();
+    }
 
-        public void SetCount(int count)
-        {
-            _countField.text = count.ToString();
-        }
-
-        public void SetColor(Color color)
-        {
-            _image.color = color;
-        }
+    public void SetColor(Color color)
+    {
+        _image.color = color;
     }
 }

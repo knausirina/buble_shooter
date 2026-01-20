@@ -3,50 +3,47 @@ using UnityEngine;
 using UnityEngine.Pool;
 using Views;
 
-namespace Field
+public class PoolBalls
 {
-    public class PoolBalls
+    private IObjectPool<BubbleView> _pool;
+
+    private readonly GameObject _prefab;
+
+    public PoolBalls(GameObject prefab)
     {
-        private IObjectPool<BubbleView> _pool;
+        _prefab = prefab;
+    }
 
-        private readonly GameObject _prefab;
-
-        public PoolBalls(GameObject prefab)
+    public IObjectPool<BubbleView> Pool
+    {
+        get
         {
-            _prefab = prefab;
-        }
-
-        public IObjectPool<BubbleView> Pool
-        {
-            get
+            if (_pool == null)
             {
-                if (_pool == null)
-                {
-                   _pool = new LinkedPool<BubbleView>(CreatePooledItem, OnTakeFromPool, OnReturnedToPool, OnDestroyPoolObject, true);
-                }
-                return _pool;
+                _pool = new LinkedPool<BubbleView>(CreatePooledItem, OnTakeFromPool, OnReturnedToPool, OnDestroyPoolObject, true);
             }
+            return _pool;
         }
+    }
 
-        private void OnDestroyPoolObject(BubbleView obj)
-        {
-            //throw new System.NotImplementedException();
-        }
+    private void OnDestroyPoolObject(BubbleView obj)
+    {
+        //throw new System.NotImplementedException();
+    }
 
-        private void OnReturnedToPool(BubbleView obj)
-        {
-            //throw new System.NotImplementedException();
-        }
+    private void OnReturnedToPool(BubbleView obj)
+    {
+        //throw new System.NotImplementedException();
+    }
 
-        private void OnTakeFromPool(BubbleView obj)
-        {
-            //throw new System.NotImplementedException();
-        }
+    private void OnTakeFromPool(BubbleView obj)
+    {
+        //throw new System.NotImplementedException();
+    }
 
-        private BubbleView CreatePooledItem()
-        {
-            var gameObject = Object.Instantiate(_prefab);
-            return gameObject.GetComponent<BubbleView>();
-        }
+    private BubbleView CreatePooledItem()
+    {
+        var gameObject = Object.Instantiate(_prefab);
+        return gameObject.GetComponent<BubbleView>();
     }
 }

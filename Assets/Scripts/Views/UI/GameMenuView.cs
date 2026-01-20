@@ -1,50 +1,61 @@
 using Cysharp.Threading.Tasks;
+using System;
+using System.Threading;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
-namespace Views.UI
+public class GameMenuView : MonoBehaviour
 {
-   public class GameMenu : MonoBehaviour
-   {
-      [SerializeField] private Button _menuButton;
-      [SerializeField] private Button _startGameButton;
+    [SerializeField] private Button _menuButton;
+    [SerializeField] private Button _startGameButton;
+    [SerializeField] private ResultPopup _resultGameView;
 
-      private GameLauncher _gameLauncher;
+    private GameLauncher _gameLauncher;
 
-      private void Awake()
-      {
-         _gameLauncher = FindObjectOfType<GameLauncher>();
-         
-         _menuButton.onClick.AddListener(OnMenuButton);
-         _startGameButton.onClick.AddListener(OnStartGameButton);
-      }
+    private void Awake()
+    {
+        _gameLauncher = FindObjectsByType<GameLauncher>(FindObjectsSortMode.None)[0];
 
-      private void OnStartGameButton()
-      {
-         _gameLauncher.StartGame();
-      }
+        _menuButton.onClick.AddListener(OnMenuButton);
+        _startGameButton.onClick.AddListener(OnStartGameButton);
+    }
 
-      private void OnMenuButton()
-      {
-         _gameLauncher.StopGame();
-         
-         OnMenuButtonAsync().Forget(Debug.LogError);
-      }
+    private void OnStartGameButton()
+    {
+        _gameLauncher.StartGame();
+    }
 
-      private async UniTask OnMenuButtonAsync()
-      {
-         LoaderView.Instance.ToggleShow(true);
-        
-         await SceneManager.LoadSceneAsync(Scenes.MenuScene);
-       
-         LoaderView.Instance.ToggleShow(false);
-      }
+    private void OnMenuButton()
+    {
+        _resultGameView.Close();
 
-      private void OnDestroy()
-      {
-         _menuButton.onClick.RemoveListener(OnMenuButton);
-         _startGameButton.onClick.RemoveListener(OnStartGameButton);
-      }
-   }
+        _gameLauncher.StopGame();
+
+        OnMenuButtonAsync(destroyCancellationToken).Forget();
+    }
+
+    private async UniTask OnMenuButtonAsync(CancellationToken cancellationToken)
+    {
+        try
+        {
+            LoaderView.ToggleShow(true);
+
+            await SceneManager.LoadSceneAsync(Scenes.MenuScene).WithCancellation(cancellationToken);
+
+            LoaderView.ToggleShow(false);
+        }
+        catch (OperationCanceledException exception)
+        {
+            Debug.Log("Cancel operation " + exception.Message);
+
+            LoaderView.ToggleShow(false);
+        }
+    }
+
+    private void OnDestroy()
+    {
+        _menuButton.onClick.RemoveListener(OnMenuButton);
+        _startGameButton.onClick.RemoveListener(OnStartGameButton);
+    }
 }

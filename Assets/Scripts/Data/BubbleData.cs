@@ -1,21 +1,18 @@
 ﻿using UnityEngine;
 
-namespace Data
+public class BubbleData
 {
-    public class BubbleData
+    public Color ColorValue { get; }
+    public Vector2Int Position { get; }
+
+    public BubbleData(Color colorValue, Vector2Int position)
     {
-        public ColorEnum Color { get; }
-        public Vector2Int Position { get; }
+        ColorValue = colorValue;
+        Position = position;
+    }
 
-        public BubbleData(ColorEnum colorEnum, Vector2Int position)
-        {
-            Color = colorEnum;
-            Position = position;
-        }
-
-        public override string ToString()
-        {
-            return $"Color= {Color} Position={Position}";
-        }
+    public override string ToString()
+    {
+        return $"Color = {ColorValue} Position = {Position}";
     }
 }
