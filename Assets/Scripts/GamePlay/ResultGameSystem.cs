@@ -10,7 +10,7 @@ public class ResultGameSystem
         _config = config;
     }
 
-    public bool IsWin(BubbleView[,] bubbleViews, Vector2Int sizeFieldInElements)
+    public bool IsWin(BubbleView[,] bubbleViews, GameParameters gameParameters)
     {
         var ballsInFirshRowCount = 0;
         for (var i = 0; i < bubbleViews.GetLength(1); i++)
@@ -21,7 +21,7 @@ public class ResultGameSystem
             }
         }
 
-        if (ballsInFirshRowCount > _config.ConditionWinInLastRowPercent * sizeFieldInElements.x)
+        if (ballsInFirshRowCount > _config.ConditionWinInLastRowPercent * gameParameters.FieldSizeInElements.x)
         {
             return false;
         }

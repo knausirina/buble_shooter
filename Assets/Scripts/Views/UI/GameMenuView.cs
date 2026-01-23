@@ -22,7 +22,7 @@ public class GameMenuView : MonoBehaviour
 
     private void OnStartGameButton()
     {
-        EventBus<ChangeGameStateEvent>.Publish(new ChangeGameStateEvent(GameState.Play));
+        EventBus<RequestChangeGameStateEvent>.Publish(new RequestChangeGameStateEvent(GameState.Play));
     }
 
     private void OnMenuButton()

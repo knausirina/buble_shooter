@@ -1526,6 +1526,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GameBoostrapper
   _config: {fileID: 11400000, guid: 97bda369dccb7a84c83a50170492ffdd, type: 2}
+  _gameContext: {fileID: 749932571}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

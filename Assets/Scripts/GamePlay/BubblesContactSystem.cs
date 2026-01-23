@@ -9,8 +9,6 @@ public class BubblesContactSystem
     private BubbleView _targetBubbleView;
     private FieldBuilder _fieldBuilder;
 
-    private const float Offset = 0.1f;
-
     public void SetData(FieldBuilder fieldBuilder)
     {
         _fieldBuilder = fieldBuilder;

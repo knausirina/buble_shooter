@@ -6,6 +6,7 @@ using Views;
 [CreateAssetMenu(fileName = "Config", menuName = "Game/Config")]
 public class Config : ScriptableObject
 {
+    [field: SerializeField] public float BallSpeed { get; private set; }
     [field: SerializeField] public BubbleView BubblePrefab { get; private set; }
     [field: SerializeField] public GameObject SlinghshotPrefab { get; private set; }
     [field: SerializeField] public TextAsset FieldTextAsset { get; private set; }

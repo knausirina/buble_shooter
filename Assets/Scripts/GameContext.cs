@@ -1,5 +1,4 @@
-﻿using Slingshot;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class GameContext : MonoBehaviour
 {

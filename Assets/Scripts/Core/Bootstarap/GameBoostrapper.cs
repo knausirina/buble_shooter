@@ -3,6 +3,7 @@
 public class GameBoostrapper : MonoBehaviour
 {
     [SerializeField] private Config _config;
+    [SerializeField] private GameContext _gameContext;
 
     private void Awake()
     {
@@ -14,8 +15,9 @@ public class GameBoostrapper : MonoBehaviour
     private void ConfigureSceneLocator(ServiceContainer sceneServiceContainer)
     {
         var game = new Game(_config);
-        sceneServiceContainer.Register(game);
 
         DisposableService.Scene.Register(game);
+
+        sceneServiceContainer.Register(_gameContext);
     }
 }

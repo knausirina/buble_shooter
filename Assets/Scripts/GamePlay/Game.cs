@@ -1,13 +1,11 @@
-﻿using Slingshot;
-using System;
+﻿using System;
 using UnityEngine;
 using Views;
 using Object = UnityEngine.Object;
 
-public class Game : IDisposable
+public class Game : IDisposable, IGameState
 {
-    public GameState GameState => _gameState;
-    private GameState _gameState = GameState.Stop;
+    public GameState State { get; private set; } = GameState.Stop;
 
     private readonly Config _config;
     
@@ -24,30 +22,22 @@ public class Game : IDisposable
 
     private int _generatedBubblesCount = 0;
     private bool _inited = false;
-
-    public GameContext GameContext => _gameContext;
     
     public Game(Config config)
     {
         _config = config;
 
         EventBus<ClosePopupEvent>.Subscribe(OnClosePopup);
-        EventBus<ChangeGameStateEvent>.Subscribe(OnChangeGameStateEvent);
+        EventBus<RequestChangeGameStateEvent>.Subscribe(OnRequestChangeGameStateEvent);
     }
 
-    public void Dispose()
+    private void OnRequestChangeGameStateEvent(RequestChangeGameStateEvent requestChangeGameStateEvent)
     {
-        EventBus<ClosePopupEvent>.Unsubscribe(OnClosePopup);
-        EventBus<ChangeGameStateEvent>.Unsubscribe(OnChangeGameStateEvent);
-        _slingShot.BallFinishedAction -= SetNextBall;
-        _bubblesContactSystem.BubbleShoot -= OnBubbleShoot;
-    }
-
-    private void OnChangeGameStateEvent(ChangeGameStateEvent changeGameStateEvent)
-    {
-        switch (changeGameStateEvent.NewState)
+        switch (requestChangeGameStateEvent.NewGameState)
         {
             case GameState.Play:
+                if (State == GameState.Play)
+                    break;
                 Start();
                 break;
             case GameState.Stop:
@@ -57,15 +47,27 @@ public class Game : IDisposable
         }
     }
 
+    public void Dispose()
+    {
+        EventBus<ClosePopupEvent>.Unsubscribe(OnClosePopup);
+        EventBus<RequestChangeGameStateEvent>.Unsubscribe(OnRequestChangeGameStateEvent);
+
+        _slingShot.BallFinishedAction -= SetNextBall;
+        _bubblesContactSystem.BubbleShoot -= OnBubbleShoot;
+    }
+
     private void Start()
     {
-        Debug.Log("Start _gameState = " + _gameState);
+        Debug.Log("Start _gameState = " + State);
 
-        if (_gameState == GameState.Play)
+        if (State == GameState.Play)
         {
+            Debug.Log("Already started game!");
             return;
         }
-        _gameState = GameState.Play;
+        State = GameState.Play;
+
+        EventBus<ChangeGameStateEvent>.Publish(new ChangeGameStateEvent(GameState.Play));
 
         Init();
 
@@ -108,7 +110,7 @@ public class Game : IDisposable
         _nextBubbleSystem ??= new NextBubbleSystem(_config, _poolBalls);
         _nextBubbleSystem.SetData(_gameContext, _gameParameters);
 
-        _slingShot.Construct(this, _bubblesContactSystem);
+        _slingShot.Construct(_bubblesContactSystem, this, _config);
     }
 
     private void OnClosePopup(ClosePopupEvent popupEvent)
@@ -124,7 +126,7 @@ public class Game : IDisposable
         if (_generatedBubblesCount >= _gameParameters.MaxCountBubbles)
         {
             Stop();
-            var isWin = _resultGameSystem.IsWin(_fieldBuilder.BubblesViews, _gameParameters.FieldSizeInElements);
+            var isWin = _resultGameSystem.IsWin(_fieldBuilder.BubblesViews, _gameParameters);
             ShowResultGame(isWin);
             return;
         }
@@ -137,18 +139,20 @@ public class Game : IDisposable
 
         _nextBubbleSystem.GenerateNextColorOfBubble();
 
-        GameContext.NextBubbleView.SetCount(_gameParameters.MaxCountBubbles - _generatedBubblesCount);
-        GameContext.NextBubbleView.SetColor(_nextBubbleSystem.GetNextColorOfBubble());
+        _gameContext.NextBubbleView.SetCount(_gameParameters.MaxCountBubbles - _generatedBubblesCount);
+        _gameContext.NextBubbleView.SetColor(_nextBubbleSystem.GetNextColorOfBubble());
 
         _slingShot.SetHolder(bubbleView);
     }
 
     public void Stop()
     {
-        _gameState = GameState.Stop;
+        State = GameState.Stop;
 
         if (_inited)
         _bubblesContactSystem.BubbleShoot -= OnBubbleShoot;
+
+        EventBus<ChangeGameStateEvent>.Publish(new ChangeGameStateEvent(GameState.Stop));
     }
 
     public void Clear()
