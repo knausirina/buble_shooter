@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "ViewsConfig", menuName = "Configs/ViewsConfig")]
+[CreateAssetMenu(fileName = "PopupsConfig", menuName = "Configs/PopupsConfig")]
 public class PopupsConfig : ScriptableObject
 {
-    [SerializeField] private List<GameObject> _viewPrefabs;
+    [SerializeField] private List<GameObject> _popupsPrefabs;
 
     private Dictionary<Type, GameObject> _cache;
 
@@ -13,7 +13,7 @@ public class PopupsConfig : ScriptableObject
     {
         _cache = new Dictionary<Type, GameObject>();
 
-        foreach (var prefab in _viewPrefabs)
+        foreach (var prefab in _popupsPrefabs)
         {
             var components = prefab.GetComponents<MonoBehaviour>();
             foreach (var comp in components)

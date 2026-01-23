@@ -37,7 +37,6 @@ public class Game : IDisposable
 
     public void Dispose()
     {
-        Debug.Log("Dispose");
         EventBus<ClosePopupEvent>.Unsubscribe(OnClosePopup);
         EventBus<ChangeGameStateEvent>.Unsubscribe(OnChangeGameStateEvent);
         _slingShot.BallFinishedAction -= SetNextBall;
