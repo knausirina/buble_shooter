@@ -1,5 +1,5 @@
-﻿public static class Scenes
+﻿public class Scenes
 {
-    public static string MenuScene = "Menu";
-    public static string GameScene = "Game";
+    public const string MenuScene = "Start";
+    public const string GameScene = "Game";
 }

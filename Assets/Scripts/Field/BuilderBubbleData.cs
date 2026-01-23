@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.IO;
-using Data;
 using UnityEngine;
 
 public class BuilderBubbleData
@@ -26,7 +25,7 @@ public class BuilderBubbleData
             string line;
             while ((line = strReader.ReadLine()) != null)
             {
-                Debug.Log($" line = {line} numRow = {numRow}");
+             //   Debug.Log($" line = {line} numRow = {numRow}");
 
                 switch (numRow)
                 {
@@ -57,8 +56,7 @@ public class BuilderBubbleData
                                 var symbol = line[j];
                                 if (symbol != EmptySymbol)
                                 {
-                                    var colorEnum = _config.GetColorByChar(symbol);
-                                    var color = _config.GetColorByEnum(colorEnum);
+                                    var color = _config.GetColor(symbol);
                                     dataInRow.Add(new BubbleData(color, new Vector2Int(numRow, j)));
                                 }
                                 else

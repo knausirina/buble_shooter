@@ -1,24 +1,19 @@
-using Data;
 using UnityEngine;
 using Views;
 
 public class FieldBuilder
 {
-    private readonly Config _config;
     private readonly PoolBalls _poolBalls;
     private GameContext _gameContext;
     private BubbleView[,] _bubblesViews;
 
-    private readonly Vector2Int _fieldSizeInPixels;
-    private readonly Vector2Int _fieldSizeInElements;
-
     private float _ballSize;
+    private Vector2Int _size;
 
     public float BallSize => _ballSize;
     public BubbleView[,] BubblesViews => _bubblesViews;
-    public FieldBuilder(Config config, PoolBalls poolBalls)
+    public FieldBuilder(PoolBalls poolBalls)
     {
-        _config = config;
         _poolBalls = poolBalls;
     }
 
@@ -32,21 +27,20 @@ public class FieldBuilder
 
         var fieldInWorldDimentionsWidth = corners[3].x - corners[0].x;
         _ballSize = (fieldInWorldDimentionsWidth / gameParameters.FieldSizeInElements.y);
-        Debug.Log("xxx _ballSize " + _ballSize + " fieldInWorldDimentionsWidth = " + fieldInWorldDimentionsWidth +
-            " fieldSizeInElements.y = " + gameParameters.FieldSizeInElements.y);
 
         var offset = _ballSize / 10;
         _ballSize -= offset;
-       // _ballSize = 0.01282051f;
 
         var countRows = (int)(fieldInWorldDimentionsWidth / _ballSize);
 
         gameContext.BubblesViewRoot.position = new Vector3(corners[1].x, corners[1].y, 0);
 
+        _size = new Vector2Int(bubblesData.RowsCount, bubblesData.ColumnCount);
         _bubblesViews = new BubbleView[countRows, bubblesData.ColumnCount];
-        for (var i = 0; i < bubblesData.RowsCount; i++)
+        Debug.Log($"xxx FieldBuilder Build _size.x={_size.x} _size.y={_size.y}");
+        for (var i = 0; i < _size.x; i++)
         {
-            for (var j = 0; j < bubblesData.ColumnCount; j++)
+            for (var j = 0; j < _size.y; j++)
             {
                 var bubbleData = bubblesData.Get(i, j);
                 if (bubbleData == null)
@@ -55,11 +49,8 @@ public class FieldBuilder
                 }
 
                 var bubble = _poolBalls.Pool.Get();
-                bubble.gameObject.name = $" i={i} j={j}";
                 bubble.Renderer.color = bubbleData.ColorValue;
                 AddBubble(bubble, i, j);
-
-                _bubblesViews[i, j] = bubble;
             }
         }
 
@@ -68,6 +59,21 @@ public class FieldBuilder
 
     public void Clear()
     {
+        Debug.Log("FieldFuilder clear");
+
+        if (_bubblesViews == null)
+            return;
+
+        for (var i = 0; i < _bubblesViews.GetLength(0); i++)
+        {
+            for (var j = 0; j < _bubblesViews.GetLength(1); j++)
+            {
+                var element = _bubblesViews[i, j];
+                if (element != null)
+                    Object.Destroy(_bubblesViews[i, j].gameObject);
+            }
+        }
+
         _bubblesViews = null;
     }
 
@@ -84,7 +90,12 @@ public class FieldBuilder
         bubbleView.Renderer.gameObject.transform.localScale = new Vector3(_ballSize, _ballSize, 1);
         bubbleView.gameObject.name = $" i={row} j={column}";
 
-        _bubblesViews[row, column] = bubbleView;
+        if (_bubblesViews[row, column] != null)
+        {
+            Debug.Log($"xxx not null in row={row} column={column}");
+        }
+        else
+            _bubblesViews[row, column] = bubbleView;
     }
 
     public Vector2 GetPosition(int row, int column)

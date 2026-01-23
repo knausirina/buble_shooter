@@ -9,8 +9,8 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 30c9f5e3fa407a24bac6937e987b1eae, type: 3}
-  m_Name: PopusConfig
-  m_EditorClassIdentifier: Assembly-CSharp::ViewsConfig
+  m_Script: {fileID: 11500000, guid: 7d2e71865350e64498da93f57a073e1b, type: 3}
+  m_Name: ViewsConfig
+  m_EditorClassIdentifier: Assembly-CSharp::PopupsConfig
   _viewPrefabs:
   - {fileID: 6056748901647663144, guid: ed1b2a25293a54342ad9bd4cbbe97efd, type: 3}

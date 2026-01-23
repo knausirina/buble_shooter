@@ -1,4 +1,4 @@
 ﻿public enum GameState
 {
-    Stop, Pause, Play, Win, Lose
+    Stop, Pause, Play
 }

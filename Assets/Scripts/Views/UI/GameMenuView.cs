@@ -9,13 +9,12 @@ public class GameMenuView : MonoBehaviour
 {
     [SerializeField] private Button _menuButton;
     [SerializeField] private Button _startGameButton;
-    [SerializeField] private ResultPopup _resultGameView;
 
-    private GameLauncher _gameLauncher;
+    private PopupsStorage _popupsStorage;
 
     private void Awake()
     {
-        _gameLauncher = FindObjectsByType<GameLauncher>(FindObjectsSortMode.None)[0];
+        _popupsStorage = ServiceLocator.Global.Get<PopupsStorage>();
 
         _menuButton.onClick.AddListener(OnMenuButton);
         _startGameButton.onClick.AddListener(OnStartGameButton);
@@ -23,14 +22,14 @@ public class GameMenuView : MonoBehaviour
 
     private void OnStartGameButton()
     {
-        _gameLauncher.StartGame();
+        EventBus<ChangeGameStateEvent>.Publish(new ChangeGameStateEvent(GameState.Play));
     }
 
     private void OnMenuButton()
     {
-        _resultGameView.Close();
+        _popupsStorage.CloseAll();
 
-        _gameLauncher.StopGame();
+        EventBus<ChangeGameStateEvent>.Publish(new ChangeGameStateEvent(GameState.Stop));
 
         OnMenuButtonAsync(destroyCancellationToken).Forget();
     }

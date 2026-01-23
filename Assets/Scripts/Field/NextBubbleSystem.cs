@@ -1,5 +1,4 @@
-﻿using Data;
-using UnityEngine;
+﻿using UnityEngine;
 using Views;
 
 public class NextBubbleSystem
@@ -10,7 +9,6 @@ public class NextBubbleSystem
     private GameParameters _gameParameters;
 
     private Color _nextColor;
-    private Color _prevColor;
 
     public NextBubbleSystem(Config config, PoolBalls poolBalls)
     {
@@ -26,9 +24,7 @@ public class NextBubbleSystem
 
     public void GenerateNextColorOfBubble()
     {
-        var color = Random.Range(1, System.Enum.GetValues(typeof(ColorEnum)).Length);
-        var colorEnum = (ColorEnum)color;
-        _nextColor = _config.GetColorByEnum(colorEnum);
+        _nextColor = _config.GetRandomColor();
     }
 
     public Color GetNextColorOfBubble()

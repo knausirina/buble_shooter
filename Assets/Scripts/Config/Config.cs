@@ -1,51 +1,40 @@
 ﻿using System;
 using System.Collections.Generic;
-using Data;
 using UnityEngine;
 using Views;
 
 [CreateAssetMenu(fileName = "Config", menuName = "Game/Config")]
 public class Config : ScriptableObject
 {
-    [SerializeField] private BubbleView _bubbleView;
+    [field: SerializeField] public BubbleView BubblePrefab { get; private set; }
+    [field: SerializeField] public GameObject SlinghshotPrefab { get; private set; }
+    [field: SerializeField] public TextAsset FieldTextAsset { get; private set; }
+    [field: SerializeField] public float ShooterHeight { get; private set; }
+    [field: SerializeField] public int ConditionWinInLastRowPercent { get; private set; }
+
     [SerializeField] private ColorConfigData[] _colorData;
-    [SerializeField] private TextAsset _fieldTextAsset;
-    [SerializeField] private float _shooterHeight;
-    [SerializeField] private int _conditionWinInLastRowPercent;
+
+    private Dictionary<Char, Color> _colors;
     
-    private Dictionary<ColorEnum, Color> _colorsByEnum;
-    private Dictionary<Char, ColorEnum> _colorEnumsByChar;
-    
-    public BubbleView BubbleView => _bubbleView;
     public IReadOnlyList<ColorConfigData> ColorBubbleData => _colorData;
-    public TextAsset FieldTextAsset => _fieldTextAsset;
-    public float ShooterHeight => _shooterHeight;
-    public int ConditionWinInLastRowPercent => _conditionWinInLastRowPercent;
 
-
-    public Color GetColorByEnum(ColorEnum colorEnum)
+    public Color GetColor(char colorChar)
     {
-        if (_colorsByEnum == null)
+        if (_colors == null)
         {
-            _colorsByEnum = new Dictionary<ColorEnum, Color>();
+            _colors = new Dictionary<Char, Color>();
             foreach (var item in _colorData)
             {
-                _colorsByEnum[item.ColorEnum] = item.Color;
+                _colors[item.Char] = item.Color;
             }
         }
-        return _colorsByEnum[colorEnum];
+        return _colors[colorChar];
     }
 
-    public ColorEnum GetColorByChar(char colorChar)
+    public Color GetRandomColor()
     {
-        if (_colorEnumsByChar == null)
-        {
-            _colorEnumsByChar = new Dictionary<Char, ColorEnum>();
-            foreach (var item in _colorData)
-            {
-                _colorEnumsByChar[item.Char] = item.ColorEnum;
-            }
-        }
-        return _colorEnumsByChar[colorChar];
+        var randomIndex = UnityEngine.Random.Range(0, _colorData.Length);
+        var colorData = _colorData[randomIndex];
+        return colorData.Color;
     }
 }

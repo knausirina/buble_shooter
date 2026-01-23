@@ -61,15 +61,16 @@
     <Analyzer Include="C:\Program Files\Unity\Hub\Editor\6000.3.1f1\Editor\Data\Tools\BuildPipeline\Unity.SourceGenerators\Unity.UIToolkit.SourceGenerator.dll" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Assets\Scripts\Views\UI\PopupsStorage.cs" />
     <Compile Include="Assets\Scripts\Slingshot\SlingShot.cs" />
     <Compile Include="Assets\Scripts\GamePlay\ResultGameSystem.cs" />
-    <Compile Include="Assets\Scripts\Views\UI\PopupsConfig.cs" />
+    <Compile Include="Assets\Scripts\Events\ClosePopupEvent.cs" />
     <Compile Include="Assets\Scripts\Data\BubbleData.cs" />
-    <Compile Include="Assets\Scripts\Views\UI\Popup.cs" />
+    <Compile Include="Assets\Scripts\Views\UI\Popups\ResultPopup.cs" />
     <Compile Include="Assets\Scripts\Data\BubblePosition.cs" />
     <Compile Include="Assets\Scripts\Field\NextBubbleSystem.cs" />
+    <Compile Include="Assets\Scripts\Events\IEvent.cs" />
     <Compile Include="Assets\Scripts\Views\UI\GameMenuView.cs" />
+    <Compile Include="Assets\Scripts\Events\ChangeGameStateEvent.cs" />
     <Compile Include="Assets\Scripts\Data\ColorConfigData.cs" />
     <Compile Include="Assets\Scripts\Views\BubbleView.cs" />
     <Compile Include="Assets\Scripts\Slingshot\SlingShotLines.cs" />
@@ -77,10 +78,10 @@
     <Compile Include="Assets\Scripts\Views\UI\NextBubbleView.cs" />
     <Compile Include="Assets\Scripts\Field\PoolBalls.cs" />
     <Compile Include="Assets\Scripts\Data\GameParameters.cs" />
+    <Compile Include="Assets\Scripts\Views\UI\Popups\PopupsConfig.cs" />
     <Compile Include="Assets\Scripts\Views\UI\LoaderView.cs" />
     <Compile Include="Assets\Scripts\Bootstrapper.cs" />
     <Compile Include="Assets\Scripts\Field\FieldBuilder.cs" />
-    <Compile Include="Assets\Scripts\GameLauncher.cs" />
     <Compile Include="Assets\Scripts\Data\BubblesData.cs" />
     <Compile Include="Assets\Scripts\Data\ColorEnum.cs" />
     <Compile Include="Assets\Scripts\Slingshot\FlyBall.cs" />
@@ -88,12 +89,14 @@
     <Compile Include="Assets\Scripts\Views\UI\MainMenuView.cs" />
     <Compile Include="Assets\Scripts\Game.cs" />
     <Compile Include="Assets\Scripts\Field\BuilderBubbleData.cs" />
-    <Compile Include="Assets\Scripts\Views\UI\ResultPopup.cs" />
     <Compile Include="Assets\Scripts\Utils.cs" />
+    <Compile Include="Assets\Scripts\Views\UI\Popups\Popup.cs" />
     <Compile Include="Assets\Scripts\Views\PopupsContext.cs" />
     <Compile Include="Assets\Scripts\Scenes.cs" />
+    <Compile Include="Assets\Scripts\Views\UI\Popups\PopupsStorage.cs" />
     <Compile Include="Assets\Scripts\ServiceLocator.cs" />
     <Compile Include="Assets\Scripts\GameState.cs" />
+    <Compile Include="Assets\Scripts\Events\EventBus.cs" />
     <Compile Include="Assets\Scripts\GamePlay\BubblesContactSystem.cs" />
   </ItemGroup>
   <ItemGroup>

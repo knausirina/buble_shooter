@@ -398,9 +398,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6639134102369792878}
-  - component: {fileID: 7379623721377555633}
   - component: {fileID: 2157020413171804739}
   - component: {fileID: 6786125973265882306}
+  - component: {fileID: 7234474988521852391}
   m_Layer: 5
   m_Name: ResultPopup
   m_TagString: Untagged
@@ -428,20 +428,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 1080, y: 1920}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &7379623721377555633
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6056748901647663144}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ba4056fdfdc3f90458e6ac783fd544b0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _winGameObject: {fileID: 8623197113103293669}
-  _loseGameObject: {fileID: 789701103733960026}
 --- !u!222 &2157020413171804739
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -480,6 +466,20 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &7234474988521852391
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6056748901647663144}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b5250de1ae26c8846ba3a3ecc5ca3f79, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ResultPopup
+  _winGameObject: {fileID: 8623197113103293669}
+  _loseGameObject: {fileID: 789701103733960026}
 --- !u!1 &6085356228283906256
 GameObject:
   m_ObjectHideFlags: 0
@@ -600,8 +600,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 7379623721377555633}
-        m_TargetAssemblyTypeName: ResultGameView, Assembly-CSharp
+      - m_Target: {fileID: 7234474988521852391}
+        m_TargetAssemblyTypeName: ResultPopup, Assembly-CSharp
         m_MethodName: Close
         m_Mode: 1
         m_Arguments:

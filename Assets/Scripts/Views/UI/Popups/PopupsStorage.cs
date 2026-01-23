@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
-using Component = UnityEngine.Component;
 
 public class PopupsStorage
 {
@@ -10,7 +9,7 @@ public class PopupsStorage
     private readonly PopupsConfig _viewsConfig;
     private readonly PopupsContext _viewsContext;
 
-    private Dictionary<Type, Component> _activePopups = new Dictionary<Type, Component>();
+    private readonly Dictionary<Type, Popup> _activePopups = new Dictionary<Type, Popup>();
 
     public PopupsStorage(PopupsConfig viewsConfig, PopupsContext viewsContext)
     {
@@ -20,7 +19,7 @@ public class PopupsStorage
         _viewsContext = viewsContext;
     }
 
-    public T GetView<T>() where T: Component
+    public T GetView<T>() where T: Popup
     {
         Type type = typeof(T);
         if (_activePopups.ContainsKey(type))
@@ -36,5 +35,14 @@ public class PopupsStorage
 
          _activePopups.Add(type, component);
         return component;
+    }
+
+    public void CloseAll()
+    {
+        foreach (var popup in _activePopups)
+        {
+            var type = popup.Key;
+            popup.Value.Close();
+        }
     }
 }

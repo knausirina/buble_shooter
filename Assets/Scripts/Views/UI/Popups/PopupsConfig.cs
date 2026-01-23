@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "ViewsConfig", menuName = "Confgis/ViewsConfig")]
+[CreateAssetMenu(fileName = "ViewsConfig", menuName = "Configs/ViewsConfig")]
 public class PopupsConfig : ScriptableObject
 {
     [SerializeField] private List<GameObject> _viewPrefabs;

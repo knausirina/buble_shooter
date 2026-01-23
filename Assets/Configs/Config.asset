@@ -12,19 +12,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 98b7f5b829e948d6b227b01a410a1e2d, type: 3}
   m_Name: Config
   m_EditorClassIdentifier: 
-  _bubbleView: {fileID: 5966502574797495775, guid: fa38ec85819cc452ea4059912b611d1c, type: 3}
+  <BubblePrefab>k__BackingField: {fileID: 5966502574797495775, guid: fa38ec85819cc452ea4059912b611d1c, type: 3}
+  <SlinghshotPrefab>k__BackingField: {fileID: 9194901025876346013, guid: ca50c48750649d24d856f2809a5d3802, type: 3}
+  <FieldTextAsset>k__BackingField: {fileID: 4900000, guid: 902a973df1be65c49a0dd5d579729e6a, type: 3}
+  <ShooterHeight>k__BackingField: 1
+  <ConditionWinInLastRowPercent>k__BackingField: 20
   _colorData:
-  - ColorEnum: 0
-    Color: {r: 0.92648506, g: 1, b: 0.0141509175, a: 1}
+  - Color: {r: 0.92648506, g: 1, b: 0.0141509175, a: 1}
     Char: 89
-  - ColorEnum: 1
-    Color: {r: 1, g: 0.047946326, b: 0, a: 1}
+  - Color: {r: 1, g: 0.047946326, b: 0, a: 1}
     Char: 82
-  - ColorEnum: 2
-    Color: {r: 0, g: 0.14186478, b: 1, a: 1}
+  - Color: {r: 0, g: 0.14186478, b: 1, a: 1}
     Char: 66
-  - ColorEnum: 3
-    Color: {r: 0.013375282, g: 1, b: 0, a: 1}
+  - Color: {r: 0.013375282, g: 1, b: 0, a: 1}
     Char: 71
-  _fieldTextAsset: {fileID: 4900000, guid: 902a973df1be65c49a0dd5d579729e6a, type: 3}
-  _shooterHeight: 1

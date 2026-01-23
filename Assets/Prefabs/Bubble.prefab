@@ -506,7 +506,7 @@ GameObject:
   - component: {fileID: 2065751221398908217}
   - component: {fileID: 5966502574797495775}
   m_Layer: 8
-  m_Name: BubbleView
+  m_Name: Bubble
   m_TagString: Bubble
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

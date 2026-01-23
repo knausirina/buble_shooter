@@ -1,10 +1,10 @@
-﻿using Data;
-using GamePlay;
+﻿using Slingshot;
+using System;
 using UnityEngine;
 using Views;
 using Object = UnityEngine.Object;
 
-public class Game
+public class Game : IDisposable
 {
     public GameState GameState => _gameState;
     private GameState _gameState = GameState.Stop;
@@ -20,70 +20,113 @@ public class Game
     private ResultGameSystem _resultGameSystem;
     private PoolBalls _poolBalls;
     private GameParameters _gameParameters;
+    private SlingShot _slingShot;
 
-    private ResultPopup _resultGameView;
     private int _generatedBubblesCount = 0;
+    private bool _inited = false;
 
     public GameContext GameContext => _gameContext;
     
     public Game(Config config)
     {
         _config = config;
+
+        EventBus<ClosePopupEvent>.Subscribe(OnClosePopup);
+        EventBus<ChangeGameStateEvent>.Subscribe(OnChangeGameStateEvent);
     }
 
-    public void Start()
+    public void Dispose()
     {
+        Debug.Log("Dispose");
+        EventBus<ClosePopupEvent>.Unsubscribe(OnClosePopup);
+        EventBus<ChangeGameStateEvent>.Unsubscribe(OnChangeGameStateEvent);
+        _slingShot.BallFinishedAction -= SetNextBall;
+        _bubblesContactSystem.BubbleShoot -= OnBubbleShoot;
+    }
+
+    private void OnChangeGameStateEvent(ChangeGameStateEvent changeGameStateEvent)
+    {
+        switch (changeGameStateEvent.NewState)
+        {
+            case GameState.Play:
+                Start();
+                break;
+            case GameState.Stop:
+                Stop();
+                Clear();
+                break;
+        }
+    }
+
+    private void Start()
+    {
+        Debug.Log("Start _gameState = " + _gameState);
+
         if (_gameState == GameState.Play)
         {
             return;
         }
         _gameState = GameState.Play;
 
+        Init();
+
+        _fieldBuilder.Build(_gameContext, _bubblesData, _gameParameters);
+        _gameParameters.BallSize = _fieldBuilder.BallSize;
+
+        _bubblesContactSystem.BubbleShoot += OnBubbleShoot;
+
+        SetNextBall();
+
+        _slingShot.BallFinishedAction += SetNextBall;
+    }
+
+    private void Init()
+    {
+        if (_inited)
+            return;
+        _inited = true;
+
+        var slinghshotGO = Object.Instantiate(_config.SlinghshotPrefab, Vector3.zero, Quaternion.identity);
+        
+        _slingShot = slinghshotGO.GetComponentInChildren<SlingShot>();
+
         _builderBubbleData ??= new BuilderBubbleData(_config);
 
-        var textAsset = _config.FieldTextAsset;
-        var fieldData = textAsset.text;
+        var fieldData = _config.FieldTextAsset.text;
 
         _gameParameters = new GameParameters();
         _bubblesData = _builderBubbleData.GetData(fieldData, ref _gameParameters);
-
         _gameContext = Object.FindObjectsByType<GameContext>(FindObjectsSortMode.None)[0];
-
-        _gameContext.FieldRectTransform.sizeDelta = _gameParameters.FieldSizeInPixels;//_gameParameters.FieldSizeInElements;
-
-        _poolBalls ??= new PoolBalls(_config.BubbleView.gameObject);
-        
-        _fieldBuilder ??= new FieldBuilder(_config, _poolBalls);
-        _fieldBuilder.Build(_gameContext, _bubblesData, _gameParameters);
-
-        _gameParameters.BallSize = _fieldBuilder.BallSize;
-        Debug.Log("_gameParameters.BallSize = " + _gameParameters.BallSize);
+        _gameContext.FieldRectTransform.sizeDelta = _gameParameters.FieldSizeInPixels;
+        _poolBalls ??= new PoolBalls(_config.BubblePrefab.gameObject);
+        _fieldBuilder ??= new FieldBuilder(_poolBalls);
 
         _resultGameSystem ??= new ResultGameSystem(_config);
 
         _bubblesContactSystem = new BubblesContactSystem();
         _bubblesContactSystem.SetData(_fieldBuilder);
-        _bubblesContactSystem.BubbleShoot += OnBubbleShoot;
-        
+
         _nextBubbleSystem ??= new NextBubbleSystem(_config, _poolBalls);
         _nextBubbleSystem.SetData(_gameContext, _gameParameters);
 
-        _gameContext.SlingShot.Construct(this, _bubblesContactSystem);
-        
-        SetNextBall();
-        
-        GameContext.SlingShot.BallFinishedAction += SetNextBall;
+        _slingShot.Construct(this, _bubblesContactSystem);
     }
-    
+
+    private void OnClosePopup(ClosePopupEvent popupEvent)
+    {
+        if (popupEvent.type == typeof(ResultPopup))
+        {
+            Clear();
+        }
+    }
+
     private void SetNextBall()
     {
-        Debug.Log("SetNextBall");
-
         if (_generatedBubblesCount >= _gameParameters.MaxCountBubbles)
         {
+            Stop();
             var isWin = _resultGameSystem.IsWin(_fieldBuilder.BubblesViews, _gameParameters.FieldSizeInElements);
             ShowResultGame(isWin);
-            Stop();
             return;
         }
        
@@ -98,30 +141,39 @@ public class Game
         GameContext.NextBubbleView.SetCount(_gameParameters.MaxCountBubbles - _generatedBubblesCount);
         GameContext.NextBubbleView.SetColor(_nextBubbleSystem.GetNextColorOfBubble());
 
-        GameContext.SlingShot.SetHolder(bubbleView);
+        _slingShot.SetHolder(bubbleView);
     }
 
     public void Stop()
     {
-        Debug.Log("xxxx Stop");
         _gameState = GameState.Stop;
-        
-        _bubblesContactSystem.BubbleShoot -= OnBubbleShoot;
 
-        _fieldBuilder.Clear();
-        _poolBalls.Pool.Clear();
+        if (_inited)
+        _bubblesContactSystem.BubbleShoot -= OnBubbleShoot;
+    }
+
+    public void Clear()
+    {
+        Debug.Log("xxx clear _fieldBuilder is null = " + (_fieldBuilder == null));
+
+        if (_inited)
+        {
+            _generatedBubblesCount = 0;
+            _fieldBuilder.Clear();
+            _poolBalls.Pool.Clear();
+        }
     }
 
     private void OnBubbleShoot(BubbleView bubbleView)
     {
-        _gameContext.SlingShot.DisableShoot();
+        _slingShot.DisableShoot();
 
         SetNextBall();
     }
 
     private void ShowResultGame(bool isWin)
     {
-        var viewService = ServiceLocator.Get<PopupsStorage>();
+        var viewService = ServiceLocator.Global.Get<PopupsStorage>();
         var resultView = viewService.GetView<ResultPopup>();
 
         resultView.IsWin = isWin;
